@@ -3,7 +3,7 @@ import os, subprocess
 
 # define our target
 target_path = 'project/bin/'
-target_name = 'libcubifier'
+target_name = 'libterrainGen'
 
 # Local dependency paths, adapt them to your setup
 godot_headers_path = "godot-cpp/godot_headers/"
