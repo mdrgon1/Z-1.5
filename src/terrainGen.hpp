@@ -17,7 +17,7 @@ namespace godot {
 
 	static const int MAX_NUM_VERTICES_PER_CUBE = 15;
 	static const int CHUNK_SIZE = 16;
-	static const int NUM_CUBES = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
+	static const int NUM_CUBES = (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1);
 	static const int MAX_NUM_VERTICES = MAX_NUM_VERTICES_PER_CUBE * NUM_CUBES;
 
 	class TerrainGen : public Node2D {
@@ -312,6 +312,7 @@ namespace godot {
 		};
 
 		float _heightmap[CHUNK_SIZE][CHUNK_SIZE];
+		float _densitymap[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 		float height = 1;
 
 		struct Vertex vertices[MAX_NUM_VERTICES];
@@ -327,10 +328,15 @@ namespace godot {
 
 		void _init();
 
-		void SetHeightmap(Array new_heightmap);
-		Array GetHeightmap(int i, int j);
+		void SetHeightmap(Array newHeightmap);
+		Array GetHeightmap();
 
-		void GenerateMesh(float height);
+		void SetHeight(float neHeight);
+
+		void GenDensitymap();
+		Array GetDensitymap();
+
+		void GenerateMesh();
 		Array GetMeshArrays(int i);
 
 		Vertex EdgeVertexPos(int edgeId, float cornerDensities[8]);

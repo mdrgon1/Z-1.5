@@ -1,4 +1,5 @@
 #include "terrainGen.hpp"
+#include "string"
 
 using namespace godot;
 
@@ -8,6 +9,9 @@ void TerrainGen::_register_methods() {
 	register_method("set_heightmap", &TerrainGen::SetHeightmap);
 	register_method("get_heightmap", &TerrainGen::GetHeightmap);
 	register_method("generate_mesh", &TerrainGen::GenerateMesh);
+	register_method("set_height", &TerrainGen::SetHeight);
+	register_method("gen_densitymap", &TerrainGen::GenDensitymap);
+	register_method("get_densitymap", &TerrainGen::GetDensitymap);
 	register_method("get_mesh_arrays", &TerrainGen::GetMeshArrays);
 	register_method("density_func", &TerrainGen::DensityFunc);
 }
@@ -33,17 +37,17 @@ void TerrainGen::SetHeightmap(Array new_heightmap) {
 	}
 }
 
-Array TerrainGen::GetHeightmap(int i, int j) {
+Array TerrainGen::GetHeightmap() {
 	Array heightmapGDArr = Array();
 	heightmapGDArr.resize(CHUNK_SIZE);
 
 	/*Array heightmapGDArr = Array();
 	heightmapGDArr.resize(CHUNK_SIZE);*/
 
-	for (i = 0; i < CHUNK_SIZE; ++i) {
+	for (int i = 0; i < CHUNK_SIZE; ++i) {
 		Array row = Array();
 		row.resize(CHUNK_SIZE);
-		for (j = 0; j < CHUNK_SIZE; ++j) {
+		for (int j = 0; j < CHUNK_SIZE; ++j) {
 			row[j] = _heightmap[i][j];
 		}
 		heightmapGDArr[i] = row;
@@ -52,9 +56,42 @@ Array TerrainGen::GetHeightmap(int i, int j) {
 	return heightmapGDArr;
 }
 
-void TerrainGen::GenerateMesh(float terrain_height) {
+Array TerrainGen::GetDensitymap() {
+	Array densitymapGDArr = Array();
+	densitymapGDArr.resize(CHUNK_SIZE);
 
-	height = terrain_height;
+	for (int i = 0; i < CHUNK_SIZE; ++i) {
+		Array layer = Array();
+		layer .resize(CHUNK_SIZE);
+		for (int j = 0; j < CHUNK_SIZE; ++j) {
+			Array column = Array();
+			column.resize(CHUNK_SIZE);
+				for (int k = 0; k < CHUNK_SIZE; ++k) {
+					column[k] = _densitymap[i][j][k];
+				}
+			layer[j] = column;
+		}
+		densitymapGDArr[i] = layer;
+	}
+
+	return densitymapGDArr;
+}
+
+void TerrainGen::SetHeight(float newHeight) {
+	height = newHeight;
+}
+
+void TerrainGen::GenDensitymap() {
+	for (int i = 0; i < CHUNK_SIZE; ++i) {
+		for (int j = 0; j < CHUNK_SIZE; ++j) {
+			for (int k = 0; k < CHUNK_SIZE; ++k) {
+				_densitymap[i][j][k] = DensityFunc(i, j, k);
+			}
+		}
+	}
+}
+
+void TerrainGen::GenerateMesh() {
 
 	float corner_densities[8];
 	int coordinates[3] = {0};
@@ -67,15 +104,18 @@ void TerrainGen::GenerateMesh(float terrain_height) {
 	//}
 
 	int index = 0;
-	for (int i = 0; i < CHUNK_SIZE; i++) {
-		for (int j = 0; j < CHUNK_SIZE; j++) {
-			for (int k = 0; k < CHUNK_SIZE; k++) {
+	for (int i = 0; i < CHUNK_SIZE - 1; i++) {
+		for (int j = 0; j < CHUNK_SIZE - 1; j++) {
+			for (int k = 0; k < CHUNK_SIZE - 1; k++) {
 				for (int l = 0; l < 8; l++) {
 					coordinates[0] = i + VERTEX_TABLE[l][0];
 					coordinates[1] = j + VERTEX_TABLE[l][1];
 					coordinates[2] = k + VERTEX_TABLE[l][2];
 
-					//corner_densities[l] = DensityFunc(coordinates);
+					/*if (i < 4 && j < 4 && k < 4) {
+						Godot::print(String(_densitymap[i][j][k]));
+					}*/
+
 					corner_densities[l] = DensityFunc(coordinates[0], coordinates[1], coordinates[2]);
 				}
 
