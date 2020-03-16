@@ -20,6 +20,7 @@ void TerrainGen::_register_methods() {
 void TerrainGen::_init() {
 }
 
+/*
 void TerrainGen::SetHeightmap(Array new_heightmap) {
 	if (new_heightmap.size() != CHUNK_SIZE) {
 		return;
@@ -34,6 +35,19 @@ void TerrainGen::SetHeightmap(Array new_heightmap) {
 		}
 		for (int j = 0; j < CHUNK_SIZE; ++j) {
 			_heightmap[i][j] = row[j];
+		}
+	}
+}
+*/
+
+void TerrainGen::SetHeightmap(Ref<Image> new_heightmap) {
+	if (new_heightmap->get_height() != CHUNK_SIZE || new_heightmap->get_width() != CHUNK_SIZE)
+		return;
+
+	new_heightmap->lock();
+	for (int i = 0; i < CHUNK_SIZE; ++i) {
+		for (int j = 0; j < CHUNK_SIZE; ++j) {
+			_heightmap[i][j] = new_heightmap->get_pixel(i, j).get_v();
 		}
 	}
 }

@@ -4,6 +4,7 @@
 #include <Godot.hpp>
 #include <Node2D.hpp>
 #include <ArrayMesh.hpp>
+#include <Image.hpp>
 #include <stdlib.h>
 
 namespace godot {
@@ -327,7 +328,7 @@ namespace godot {
 
 		void _init();
 
-		void SetHeightmap(Array new_heightmap);
+		void SetHeightmap(Ref<Image> new_heightmap);
 		Array GetHeightmap();
 
 		void GenDensitymap();
