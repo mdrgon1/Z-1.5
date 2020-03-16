@@ -3,8 +3,7 @@
 
 #include <Godot.hpp>
 #include <Node2D.hpp>
-#include <Mesh.hpp>
-#include <tuple>
+#include <ArrayMesh.hpp>
 #include <stdlib.h>
 
 namespace godot {
@@ -328,16 +327,15 @@ namespace godot {
 
 		void _init();
 
-		void SetHeightmap(Array newHeightmap);
+		void SetHeightmap(Array new_heightmap);
 		Array GetHeightmap();
-
-		void SetHeight(float neHeight);
 
 		void GenDensitymap();
 		Array GetDensitymap();
 
 		void GenerateMesh();
-		Array GetMeshArrays(int i);
+		void SetHeight(float newHeight);
+		Ref<ArrayMesh> GetMesh();
 
 		Vertex EdgeVertexPos(int edgeId, float cornerDensities[8]);
 	};

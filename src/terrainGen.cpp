@@ -1,5 +1,6 @@
 #include "terrainGen.hpp"
-#include "string"
+#include <SurfaceTool.hpp>
+#include <Mesh.hpp>
 
 using namespace godot;
 
@@ -12,7 +13,7 @@ void TerrainGen::_register_methods() {
 	register_method("set_height", &TerrainGen::SetHeight);
 	register_method("gen_densitymap", &TerrainGen::GenDensitymap);
 	register_method("get_densitymap", &TerrainGen::GetDensitymap);
-	register_method("get_mesh_arrays", &TerrainGen::GetMeshArrays);
+	register_method("get_mesh", &TerrainGen::GetMesh);
 	register_method("density_func", &TerrainGen::DensityFunc);
 }
 
@@ -77,10 +78,6 @@ Array TerrainGen::GetDensitymap() {
 	return densitymapGDArr;
 }
 
-void TerrainGen::SetHeight(float newHeight) {
-	height = newHeight;
-}
-
 void TerrainGen::GenDensitymap() {
 	for (int i = 0; i < CHUNK_SIZE; ++i) {
 		for (int j = 0; j < CHUNK_SIZE; ++j) {
@@ -138,40 +135,20 @@ void TerrainGen::GenerateMesh() {
 						vertex_index = MAX_NUM_VERTICES_PER_CUBE;
 					}
 				}
-
-
-
-				//chunk.cube_indices[index] = get_cube_index(corner_densities);
-				//chunk.cube_offsets[index][0] = i;
-				//chunk.cube_offsets[index][1] = j;
-				//chunk.cube_offsets[index][2] = k;
-
-				//vertices[index] = Vector3(i + 1, j, k);
-				//vertices[index++] = Vector3(i, j + 1, k);
-				//vertices[index++] = Vector3(i, j, k + 1);
-				//index++;
 			}
 		}
 	}
 
-	numVertices = index + 1;
-	//int num_vertices = 0;
-	//for (int i : cube_indices) {
-	//	num_vertices += VERTICES_PER_CUBE[i];
-	//}
-	//
-	//Vector3 vertices[num_vertices];
-
-	//vertex_arr = vertices;
+	numVertices = index;
 }
 
-Array TerrainGen::GetMeshArrays(int i) {
-	//Vertex vertex = vertices[i];
-	//return Vector3(vertex.x, vertex.y, vertex.z);
+void TerrainGen::SetHeight(float newHeight) {
+	height = newHeight;
+}
 
-	//return num_vertices;
+Ref<ArrayMesh> TerrainGen::GetMesh() {
 
-	Array vertex_gdarr = Array();
+	/*Array vertex_gdarr = Array();
 	vertex_gdarr.resize(numVertices);
 
 	Array mesh_arr = Array();
@@ -181,14 +158,26 @@ Array TerrainGen::GetMeshArrays(int i) {
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
 		vertex_gdarr[i] = Vector3(vertex.x, vertex.z, vertex.y);
-		//vertex_gdarr[i] = Vector3(density_func([10, 3, 6]), 0, 0);
 	}
 
 	mesh_arr[0] = vertex_gdarr;
-	//Array debugArr = Array();
-	//debugArr.append(numVertices);
-	//return debugArr;
-	return mesh_arr;
+	return mesh_arr;*/
+	
+	Ref<SurfaceTool> st = SurfaceTool::_new();
+	st->begin(Mesh::PRIMITIVE_TRIANGLES);
+
+	const Vector3 normal = Vector3(0, 0, 1);
+	Vertex vertex;
+	for (int i = 0; i < numVertices; i++) {
+		vertex = vertices[i];
+		st->add_normal(normal);
+		st->add_vertex(Vector3(vertex.x, vertex.z, vertex.y));
+	}
+
+	st->index();
+	st->generate_normals();
+
+	return st->commit();
 }
 
 int TerrainGen::GetCubeId(float values[8]) {
