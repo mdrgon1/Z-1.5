@@ -1,13 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\bin",
-    "\\godot-cpp\\godot_headers",
+    "\\godot-cpp\\include\\gen",
     "\\project",
-    "\\project\\bin",
-    "\\project\\bin\\win64",
     "\\src"
   ],
-  "SelectedNode": "\\project\\bin\\win64\\libterrainGen.dll",
+  "SelectedNode": "\\src\\terrainGen.cpp",
   "PreviewInSolutionExplorer": false
 }
