@@ -1,6 +1,7 @@
 #include "terrainGen.hpp"
 #include <SurfaceTool.hpp>
 #include <Mesh.hpp>
+#include <algorithm>
 
 using namespace godot;
 
@@ -83,7 +84,7 @@ void TerrainGen::GenerateMesh() {
 
 	float corner_densities[8];
 	int coordinates[3] = {0};
-	int cubeId;
+	short int cubeId;
 	int edge_index;
 	float cube_offset[3];
 	Vertex vertex;
@@ -92,19 +93,16 @@ void TerrainGen::GenerateMesh() {
 	//}
 
 	int index = 0;
-	for (int i = 0; i < CHUNK_SIZE - 1; i++) {
-		for (int j = 0; j < CHUNK_SIZE - 1; j++) {
-			for (int k = 0; k < CHUNK_SIZE - 1; k++) {
+	for (int i = 0; i < CHUNK_SIZE - 1; i++) {	//x coordinates
+		for (int j = 0; j < CHUNK_SIZE - 1; j++) {	//z coordinates
+			for (int k = 0; k < std::min(int(ceil(height)), CHUNK_SIZE - 1); k++) {	//y coordinates
 				for (int l = 0; l < 8; l++) {
+					//assign xyz coordinates
 					coordinates[0] = i + VERTEX_TABLE[l][0];
 					coordinates[1] = j + VERTEX_TABLE[l][1];
 					coordinates[2] = k + VERTEX_TABLE[l][2];
 
-					/*if (i < 4 && j < 4 && k < 4) {
-						Godot::print(String(_densitymap[i][j][k]));
-					}*/
-
-					corner_densities[l] = DensityFunc(coordinates[0], coordinates[1], coordinates[2]);
+					corner_densities[l] = _densitymap[coordinates[0]][coordinates[1]][coordinates[2]];
 				}
 
 				cubeId = GetCubeId(corner_densities);
@@ -125,6 +123,10 @@ void TerrainGen::GenerateMesh() {
 					else {
 						vertex_index = MAX_NUM_VERTICES_PER_CUBE;
 					}
+				}
+
+				if (cubeId & 0b00001111 == 0) {	//check that the top 4 vertices are below threshold
+					k = height;	//pop out of the for loop
 				}
 			}
 		}
@@ -172,7 +174,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 }
 
 int TerrainGen::GetCubeId(float values[8]) {
-	int cube_index = 0;
+	short int cube_index = 0;
 	for (int i = 0; i < 8; i++) {
 		if (values[i] > 0) {
 			cube_index |= 1 << i;
@@ -187,7 +189,6 @@ float TerrainGen::DensityFunc(int x, int y, int z) {
 	/*int x = coordinates[0];
 	int y = coordinates[1];
 	int z = coordinates[2];*/
-
 	float density = z - _heightmap[x][y] * height;
 	return density;
 }

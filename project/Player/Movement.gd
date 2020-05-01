@@ -9,7 +9,8 @@ var vel_2D : Vector2
 var forward : Vector3
 var forward2D : Vector2
 
-onready var camera = get_viewport().get_camera()
+#onready var camera = get_viewport().get_camera()
+onready var camera = get_node("../../Camera")
 
 func _physics_process(delta):
 	
