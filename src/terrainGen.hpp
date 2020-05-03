@@ -336,7 +336,7 @@ namespace godot {
 
 		void GenerateMesh();
 		void SetHeight(float newHeight);
-		Ref<ArrayMesh> GetMesh();
+		PoolVector3Array GetMesh();
 
 		Vertex EdgeVertexPos(int edgeId, float cornerDensities[8]);
 	};

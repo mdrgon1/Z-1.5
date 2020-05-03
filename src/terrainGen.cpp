@@ -1,6 +1,7 @@
 #include "terrainGen.hpp"
 #include <SurfaceTool.hpp>
 #include <Mesh.hpp>
+#include <algorithm>
 
 using namespace godot;
 
@@ -18,6 +19,7 @@ void TerrainGen::_register_methods() {
 }
 
 void TerrainGen::_init() {
+	std::cout << sizeof(TerrainGen) << std::endl;
 }
 
 void TerrainGen::SetHeightmap(Ref<Image> new_heightmap) {
@@ -83,7 +85,7 @@ void TerrainGen::GenerateMesh() {
 
 	float corner_densities[8];
 	int coordinates[3] = {0};
-	int cubeId;
+	short int cubeId;
 	int edge_index;
 	float cube_offset[3];
 	Vertex vertex;
@@ -92,22 +94,20 @@ void TerrainGen::GenerateMesh() {
 	//}
 
 	int index = 0;
-	for (int i = 0; i < CHUNK_SIZE - 1; i++) {
-		for (int j = 0; j < CHUNK_SIZE - 1; j++) {
-			for (int k = 0; k < CHUNK_SIZE - 1; k++) {
+	for (int i = 0; i < CHUNK_SIZE - 1; i++) {	//x coordinates
+		for (int j = 0; j < CHUNK_SIZE - 1; j++) {	//z coordinates
+			for (int k = 0; k < std::min(int(ceil(height)), CHUNK_SIZE - 1); k++) {	//y coordinates
 				for (int l = 0; l < 8; l++) {
+					//assign xyz coordinates
 					coordinates[0] = i + VERTEX_TABLE[l][0];
 					coordinates[1] = j + VERTEX_TABLE[l][1];
 					coordinates[2] = k + VERTEX_TABLE[l][2];
 
-					/*if (i < 4 && j < 4 && k < 4) {
-						Godot::print(String(_densitymap[i][j][k]));
-					}*/
-
-					corner_densities[l] = DensityFunc(coordinates[0], coordinates[1], coordinates[2]);
+					corner_densities[l] = _densitymap[coordinates[0]][coordinates[1]][coordinates[2]];
 				}
 
 				cubeId = GetCubeId(corner_densities);
+
 				cube_offset[0] = i;
 				cube_offset[1] = j;
 				cube_offset[2] = k;
@@ -137,28 +137,43 @@ void TerrainGen::SetHeight(float newHeight) {
 	height = newHeight;
 }
 
-Ref<ArrayMesh> TerrainGen::GetMesh() {
+PoolVector3Array TerrainGen::GetMesh() {
 
-	/*Array vertex_gdarr = Array();
+	Array mesh_gdarr = Array();
+	mesh_gdarr.resize(Mesh::ARRAY_MAX);
+
+	Array vertex_gdarr = PoolVector3Array();
+	Array uv_gdarr = Array();
+	Array normal_gdarr = Array();
+	
 	vertex_gdarr.resize(numVertices);
-
-	Array mesh_arr = Array();
-	mesh_arr.resize(1);
+	uv_gdarr.resize(numVertices);
+	normal_gdarr.resize(numVertices);
 
 	Vertex vertex;
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
 		vertex_gdarr[i] = Vector3(vertex.x, vertex.z, vertex.y);
+		uv_gdarr[i] = Vector3(0, 0, 0);
+		normal_gdarr[i] = Vector3(0, 0, 0);
 	}
 
-	mesh_arr[0] = vertex_gdarr;
-	return mesh_arr;*/
-	
+	return vertex_gdarr;
+
+	//mesh_gdarr[Mesh::ARRAY_VERTEX] = vertex_gdarr;
+	//mesh_gdarr[Mesh::ARRAY_TEX_UV] = vertex_gdarr;
+	//mesh_gdarr[Mesh::ARRAY_NORMAL] = vertex_gdarr;
+
+	//Ref<ArrayMesh> mesh;
+	//mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_gdarr);
+
+	//return mesh;
+
 	Ref<SurfaceTool> st = SurfaceTool::_new();
 	st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
 	const Vector3 normal = Vector3(0, 0, 1);
-	Vertex vertex;
+	//Vertex vertex;
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
 		st->add_normal(normal);
@@ -168,11 +183,11 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	st->index();
 	st->generate_normals();
 
-	return st->commit();
+	//return st->commit();
 }
 
 int TerrainGen::GetCubeId(float values[8]) {
-	int cube_index = 0;
+	short int cube_index = 0;
 	for (int i = 0; i < 8; i++) {
 		if (values[i] > 0) {
 			cube_index |= 1 << i;
@@ -187,7 +202,6 @@ float TerrainGen::DensityFunc(int x, int y, int z) {
 	/*int x = coordinates[0];
 	int y = coordinates[1];
 	int z = coordinates[2];*/
-
 	float density = z - _heightmap[x][y] * height;
 	return density;
 }
