@@ -1,10 +1,7 @@
 {
   "ExpandedNodes": [
     "",
-    "\\godot-cpp\\include\\gen",
-    "\\project",
-    "\\src"
+    "\\project"
   ],
-  "SelectedNode": "\\src\\terrainGen.cpp",
   "PreviewInSolutionExplorer": false
 }

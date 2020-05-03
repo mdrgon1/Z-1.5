@@ -19,6 +19,7 @@ void TerrainGen::_register_methods() {
 }
 
 void TerrainGen::_init() {
+	std::cout << sizeof(TerrainGen) << std::endl;
 }
 
 void TerrainGen::SetHeightmap(Ref<Image> new_heightmap) {
@@ -106,6 +107,7 @@ void TerrainGen::GenerateMesh() {
 				}
 
 				cubeId = GetCubeId(corner_densities);
+
 				cube_offset[0] = i;
 				cube_offset[1] = j;
 				cube_offset[2] = k;
@@ -124,10 +126,6 @@ void TerrainGen::GenerateMesh() {
 						vertex_index = MAX_NUM_VERTICES_PER_CUBE;
 					}
 				}
-
-				if (cubeId & 0b00001111 == 0) {	//check that the top 4 vertices are below threshold
-					k = height;	//pop out of the for loop
-				}
 			}
 		}
 	}
@@ -139,28 +137,43 @@ void TerrainGen::SetHeight(float newHeight) {
 	height = newHeight;
 }
 
-Ref<ArrayMesh> TerrainGen::GetMesh() {
+PoolVector3Array TerrainGen::GetMesh() {
 
-	/*Array vertex_gdarr = Array();
+	Array mesh_gdarr = Array();
+	mesh_gdarr.resize(Mesh::ARRAY_MAX);
+
+	Array vertex_gdarr = PoolVector3Array();
+	Array uv_gdarr = Array();
+	Array normal_gdarr = Array();
+	
 	vertex_gdarr.resize(numVertices);
-
-	Array mesh_arr = Array();
-	mesh_arr.resize(1);
+	uv_gdarr.resize(numVertices);
+	normal_gdarr.resize(numVertices);
 
 	Vertex vertex;
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
 		vertex_gdarr[i] = Vector3(vertex.x, vertex.z, vertex.y);
+		uv_gdarr[i] = Vector3(0, 0, 0);
+		normal_gdarr[i] = Vector3(0, 0, 0);
 	}
 
-	mesh_arr[0] = vertex_gdarr;
-	return mesh_arr;*/
-	
+	return vertex_gdarr;
+
+	//mesh_gdarr[Mesh::ARRAY_VERTEX] = vertex_gdarr;
+	//mesh_gdarr[Mesh::ARRAY_TEX_UV] = vertex_gdarr;
+	//mesh_gdarr[Mesh::ARRAY_NORMAL] = vertex_gdarr;
+
+	//Ref<ArrayMesh> mesh;
+	//mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, mesh_gdarr);
+
+	//return mesh;
+
 	Ref<SurfaceTool> st = SurfaceTool::_new();
 	st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
 	const Vector3 normal = Vector3(0, 0, 1);
-	Vertex vertex;
+	//Vertex vertex;
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
 		st->add_normal(normal);
@@ -170,7 +183,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	st->index();
 	st->generate_normals();
 
-	return st->commit();
+	//return st->commit();
 }
 
 int TerrainGen::GetCubeId(float values[8]) {
