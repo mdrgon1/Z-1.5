@@ -10,9 +10,15 @@
 namespace godot {
 	struct Vertex {
 	public:
-		float x;
-		float y;
-		float z;
+		//spatial coordinates
+		float xPos;
+		float yPos;
+		float zPos;
+
+		//normal vector
+		float xNorm;
+		float yNorm;
+		float zNorm;
 	};
 
 	static const int MAX_NUM_VERTICES_PER_CUBE = 15;

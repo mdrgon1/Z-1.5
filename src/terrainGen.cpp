@@ -19,7 +19,6 @@ void TerrainGen::_register_methods() {
 }
 
 void TerrainGen::_init() {
-	std::cout << sizeof(TerrainGen) << std::endl;
 }
 
 void TerrainGen::SetHeightmap(Ref<Image> new_heightmap) {
@@ -116,9 +115,9 @@ void TerrainGen::GenerateMesh() {
 					edge_index = TRIANGUALATION_TABLE[cubeId][vertex_index];
 					if (edge_index != -1) {
 						vertex = EdgeVertexPos(edge_index, corner_densities);
-						vertex.x += i;
-						vertex.y += j;
-						vertex.z += k;
+						vertex.xPos += i;
+						vertex.yPos += j;
+						vertex.zPos += k;
 						vertices[index] = vertex;
 						index++;
 					}
@@ -139,26 +138,26 @@ void TerrainGen::SetHeight(float newHeight) {
 
 PoolVector3Array TerrainGen::GetMesh() {
 
-	Array mesh_gdarr = Array();
-	mesh_gdarr.resize(Mesh::ARRAY_MAX);
+	Array meshGDArray = Array();
+	meshGDArray.resize(Mesh::ARRAY_MAX);
 
-	Array vertex_gdarr = PoolVector3Array();
+	Array vertexGDArray = PoolVector3Array();
 	Array uv_gdarr = Array();
 	Array normal_gdarr = Array();
 	
-	vertex_gdarr.resize(numVertices);
+	vertexGDArray.resize(numVertices);
 	uv_gdarr.resize(numVertices);
 	normal_gdarr.resize(numVertices);
 
 	Vertex vertex;
 	for (int i = 0; i < numVertices; i++) {
 		vertex = vertices[i];
-		vertex_gdarr[i] = Vector3(vertex.x, vertex.z, vertex.y);
+		vertexGDArray[i] = Vector3(vertex.xPos, vertex.zPos, vertex.yPos);
 		uv_gdarr[i] = Vector3(0, 0, 0);
 		normal_gdarr[i] = Vector3(0, 0, 0);
 	}
 
-	return vertex_gdarr;
+	return vertexGDArray;
 
 	//mesh_gdarr[Mesh::ARRAY_VERTEX] = vertex_gdarr;
 	//mesh_gdarr[Mesh::ARRAY_TEX_UV] = vertex_gdarr;
@@ -169,32 +168,32 @@ PoolVector3Array TerrainGen::GetMesh() {
 
 	//return mesh;
 
-	Ref<SurfaceTool> st = SurfaceTool::_new();
-	st->begin(Mesh::PRIMITIVE_TRIANGLES);
+	//Ref<SurfaceTool> st = SurfaceTool::_new();
+	//st->begin(Mesh::PRIMITIVE_TRIANGLES);
 
-	const Vector3 normal = Vector3(0, 0, 1);
-	//Vertex vertex;
-	for (int i = 0; i < numVertices; i++) {
-		vertex = vertices[i];
-		st->add_normal(normal);
-		st->add_vertex(Vector3(vertex.x, vertex.z, vertex.y));
-	}
+	//const Vector3 normal = Vector3(0, 0, 1);
+	////Vertex vertex;
+	//for (int i = 0; i < numVertices; i++) {
+	//	vertex = vertices[i];
+	//	st->add_normal(normal);
+	//	st->add_vertex(Vector3(vertex.x, vertex.z, vertex.y));
+	//}
 
-	st->index();
-	st->generate_normals();
+	//st->index();
+	//st->generate_normals();
 
 	//return st->commit();
 }
 
 int TerrainGen::GetCubeId(float values[8]) {
-	short int cube_index = 0;
+	short int cubeIndex = 0;
 	for (int i = 0; i < 8; i++) {
 		if (values[i] > 0) {
-			cube_index |= 1 << i;
+			cubeIndex |= 1 << i;
 		}
 	}
 
-	return cube_index;
+	return cubeIndex;
 }
 
 //float Cubifier::DensityFunc(int coordinates[3]) {
@@ -218,15 +217,15 @@ Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
 	float density_range = abs(v1 - v2);
 	float lerp_value = abs(v1) / density_range;
 
-	float pos_arr[3];
+	float posArray[3];
 	for (int i = 0; i < 3; i++) {
 		//lerp between VERTEX_TABLE[edge[0]][i] and VERTEX_TABLE[edge[1]][i], apparently not already a function
-		pos_arr[i] = VERTEX_TABLE[edge[0]][i] + lerp_value * (VERTEX_TABLE[edge[1]][i] - VERTEX_TABLE[edge[0]][i]);
+		posArray[i] = VERTEX_TABLE[edge[0]][i] + lerp_value * (VERTEX_TABLE[edge[1]][i] - VERTEX_TABLE[edge[0]][i]);
 	}
 
-	pos.x = pos_arr[0];
-	pos.y = pos_arr[1];
-	pos.z = pos_arr[2];
+	pos.xPos = posArray[0];
+	pos.yPos = posArray[1];
+	pos.zPos = posArray[2];
 
 	return pos;
 }
