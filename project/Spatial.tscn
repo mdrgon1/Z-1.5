@@ -27,8 +27,8 @@ func set_load_heightmap(value):
 
 func load_heightmap():
 	heightmap_img = heightmap_tex.get_data()
-	test.set_height(height)
 	
+	test.set_height(height)
 	test.set_heightmap(heightmap_img)
 	test.gen_densitymap()
 	
@@ -38,44 +38,47 @@ func change_height(new_height):
 	load_heightmap()
 
 func update_mesh():
-	var time = OS.get_ticks_msec()
 	
 	test.generate_mesh();
 	
-	var vertex_array = test.get_mesh()
+#	var vertex_array
+#
+#	var arrays = []
+#	arrays.resize(Mesh.ARRAY_MAX)
+#
+#	var normal_array = PoolVector3Array()
+#	normal_array.resize(vertex_array.size())
+#	var uv_array = PoolVector3Array()
+#	uv_array.resize(vertex_array.size())
+#	var index_array = PoolIntArray()
+#	index_array.resize(vertex_array.size())
+#
+#	for i in range(vertex_array.size()):
+#		normal_array[i] = Vector3(0, 0, 0)
+#		uv_array[i] = Vector3(0, 0, 0)
+#		index_array[i] = i;
+#
+#	arrays[Mesh.ARRAY_VERTEX] = vertex_array
+#	arrays[Mesh.ARRAY_NORMAL] = normal_array
+#	arrays[Mesh.ARRAY_TEX_UV] = uv_array
+#	arrays[Mesh.ARRAY_INDEX] = index_array
+#
+#	var m = ArrayMesh.new()
+#
+#	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+#
+#	m.regen_normalmaps()
 	
-	var arrays = []
-	arrays.resize(Mesh.ARRAY_MAX)
+	set_mesh(test.get_mesh())
 	
-	var normal_array = PoolVector3Array()
-	normal_array.resize(vertex_array.size())
-	var uv_array = PoolVector3Array()
-	uv_array.resize(vertex_array.size())
-	var index_array = PoolIntArray()
-	index_array.resize(vertex_array.size())
-	
-	for i in range(vertex_array.size()):
-		normal_array[i] = Vector3(0, 0, 0)
-		uv_array[i] = Vector3(0, 0, 0)
-		index_array[i] = i;
-	
-	arrays[Mesh.ARRAY_VERTEX] = vertex_array
-	arrays[Mesh.ARRAY_NORMAL] = normal_array
-	arrays[Mesh.ARRAY_TEX_UV] = uv_array
-	arrays[Mesh.ARRAY_INDEX] = index_array
-	
-	var m = ArrayMesh.new()
-	
-	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	
-	m.regen_normalmaps()
-	
-	set_mesh(m)
 
 func _process(delta):
 	if Input.is_action_pressed(\"ui_left\"):
+		var time = OS.get_ticks_msec()
 		change_height(height + delta * 3)
 		update_mesh()
+		print_debug(OS.get_ticks_msec() - time);
+		
 	if Input.is_action_pressed(\"ui_right\"):
 		change_height(height - delta * 3)
 		update_mesh()"

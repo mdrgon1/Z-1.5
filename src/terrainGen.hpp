@@ -4,12 +4,14 @@
 #include <Godot.hpp>
 #include <Node2D.hpp>
 #include <ArrayMesh.hpp>
-#include <Image.hpp>
+#include <Texture.hpp>
 #include <stdlib.h>
 
 namespace godot {
 	struct Vertex {
 	public:
+		Vertex() : xPos(0), yPos(0), zPos(0), xNorm(0), yNorm(0), zNorm(0) {}
+
 		//spatial coordinates
 		float xPos;
 		float yPos;
@@ -19,6 +21,34 @@ namespace godot {
 		float xNorm;
 		float yNorm;
 		float zNorm;
+
+		Vertex& operator+(Vertex& v) {
+			Vertex vertex;
+
+			vertex.xPos = xPos + v.xPos;
+			vertex.yPos = yPos + v.yPos;
+			vertex.yPos = zPos + v.zPos;
+
+			vertex.xNorm = xNorm + v.xNorm;
+			vertex.yNorm = yNorm + v.yNorm;
+			vertex.yNorm = zNorm + v.zNorm;
+
+			return vertex;
+		}
+
+		Vertex& operator-(Vertex& v) {
+			Vertex vertex;
+
+			vertex.xPos = xPos - v.xPos;
+			vertex.yPos = yPos - v.yPos;
+			vertex.zPos = zPos - v.zPos;
+
+			vertex.xNorm = xNorm - v.xNorm;
+			vertex.yNorm = yNorm - v.yNorm;
+			vertex.zNorm = zNorm - v.zNorm;
+
+			return vertex;
+		}
 	};
 
 	static const int MAX_NUM_VERTICES_PER_CUBE = 15;
@@ -321,39 +351,47 @@ namespace godot {
 		float _densitymap[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 		float height = 1;
 
-		struct Vertex vertices[MAX_NUM_VERTICES];
+		Array meshGDArray = Array();
+
+		PoolVector3Array vertexGDArray;
+		PoolVector3Array normalGDArray;
 		int numVertices;
 
 		int GetCubeId(float values[8]);
 		//float DensityFunc(int coordinates[3]);
 
 	public:
-
-		float DensityFunc(int x, int y, int z);
+		
 		static void _register_methods();
 
 		void _init();
 
-		void SetHeightmap(Ref<Image> new_heightmap);
+		void SetHeightmap(Ref<Image> newHeightmap);
 		Array GetHeightmap();
 
 		void GenDensitymap();
 		Array GetDensitymap();
 
+		//populate vertexGDArray and normalGDArray with mesh data
 		void GenerateMesh();
+		
+		//calculate normals of each vertex, assuming they form a triangle, no smooth shading so all the normals are the same
+		//write normals directly to vertices
+		void GenerateNormals(Vertex* vertices[3]);
+		
 		void SetHeight(float newHeight);
-		PoolVector3Array GetMesh();
+		
+		//create an arraymesh usinf vertexGDArray and normalGDArray
+		//return final arraymesh
+		Ref<ArrayMesh> GetMesh();
 
+		//sample the density function
+		//return a density given 3 coordinates in space
+		float DensityFunc(int x, int y, int z);
+
+		//find how far along the edge a vertex should be given the edge ID and density values for each corner
+		//return coordinates relative to the cube
 		Vertex EdgeVertexPos(int edgeId, float cornerDensities[8]);
-	};
-
-	struct Cubes {
-	private:
-
-	public:
-		float cubeIds[NUM_CUBES];
-		float cubeOffsets[NUM_CUBES][3];
-		float vertices[MAX_NUM_VERTICES][3];
 	};
 }
 #endif /* !TERRAIN_GEN_HPP */
