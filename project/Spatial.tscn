@@ -27,8 +27,8 @@ func set_load_heightmap(value):
 
 func load_heightmap():
 	heightmap_img = heightmap_tex.get_data()
-	test.set_height(height)
 	
+	test.set_height(height)
 	test.set_heightmap(heightmap_img)
 	test.gen_densitymap()
 	
@@ -38,44 +38,51 @@ func change_height(new_height):
 	load_heightmap()
 
 func update_mesh():
-	var time = OS.get_ticks_msec()
 	
+	var time = OS.get_ticks_msec()	
 	test.generate_mesh();
+	print_debug(OS.get_ticks_msec() - time);
+
+#	var vertex_array
+#
+#	var arrays = []
+#	arrays.resize(Mesh.ARRAY_MAX)
+#
+#	var normal_array = PoolVector3Array()
+#	normal_array.resize(vertex_array.size())
+#	var uv_array = PoolVector3Array()
+#	uv_array.resize(vertex_array.size())
+#	var index_array = PoolIntArray()
+#	index_array.resize(vertex_array.size())
+#
+#	for i in range(vertex_array.size()):
+#		normal_array[i] = Vector3(0, 0, 0)
+#		uv_array[i] = Vector3(0, 0, 0)
+#		index_array[i] = i;
+#
+#	arrays[Mesh.ARRAY_VERTEX] = vertex_array
+#	arrays[Mesh.ARRAY_NORMAL] = normal_array
+#	arrays[Mesh.ARRAY_TEX_UV] = uv_array
+#	arrays[Mesh.ARRAY_INDEX] = index_array
+#
+#	var m = ArrayMesh.new()
+#
+#	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+#
+#	m.regen_normalmaps()
 	
-	var vertex_array = test.get_mesh()
+	var m = test.get_mesh()
 	
-	var arrays = []
-	arrays.resize(Mesh.ARRAY_MAX)
-	
-	var normal_array = PoolVector3Array()
-	normal_array.resize(vertex_array.size())
-	var uv_array = PoolVector3Array()
-	uv_array.resize(vertex_array.size())
-	var index_array = PoolIntArray()
-	index_array.resize(vertex_array.size())
-	
-	for i in range(vertex_array.size()):
-		normal_array[i] = Vector3(0, 0, 0)
-		uv_array[i] = Vector3(0, 0, 0)
-		index_array[i] = i;
-	
-	arrays[Mesh.ARRAY_VERTEX] = vertex_array
-	arrays[Mesh.ARRAY_NORMAL] = normal_array
-	arrays[Mesh.ARRAY_TEX_UV] = uv_array
-	arrays[Mesh.ARRAY_INDEX] = index_array
-	
-	var m = ArrayMesh.new()
-	
-	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	
-	m.regen_normalmaps()
+	var arrays = m.surface_get_arrays(0)
 	
 	set_mesh(m)
+	
 
 func _process(delta):
 	if Input.is_action_pressed(\"ui_left\"):
 		change_height(height + delta * 3)
 		update_mesh()
+		
 	if Input.is_action_pressed(\"ui_right\"):
 		change_height(height - delta * 3)
 		update_mesh()"
@@ -86,7 +93,7 @@ func _process(delta):
 
 [node name="Camera" parent="." instance=ExtResource( 1 )]
 transform = Transform( -4.33939e-008, -0.616908, 0.787035, 5.25838e-009, 0.787035, 0.616908, -1, 3.09086e-008, -3.09086e-008, 13.279, 15.17, -0.134 )
-current = true
+current = false
 
 [node name="Terrain" type="MeshInstance" parent="."]
 transform = Transform( 0.999999, 0, 0, 0, 1, 0, 0, 0, 0.999999, -8, 0, 6.22603 )
