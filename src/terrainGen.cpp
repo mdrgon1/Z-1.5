@@ -130,7 +130,7 @@ void TerrainGen::GenerateMesh() {
 				cube_offset[2] = k;
 
 				//iterate through every set of 3 vertices and write position/normal data to arrays
-				for (int vertex_index = 0; vertex_index < MAX_NUM_VERTICES_PER_CUBE; vertex_index+=3) {
+				for (int vertex_index = 0; vertex_index < MAX_NUM_VERTICES_PER_CUBE; vertex_index += 3) {
 					Vertex* triangle[3];
 
 					if (TRIANGUALATION_TABLE[cubeId][vertex_index] == -1)
@@ -148,27 +148,26 @@ void TerrainGen::GenerateMesh() {
 							triangle[v]->xPos += i;
 							triangle[v]->yPos += j;
 							triangle[v]->zPos += k;
-							
+
 							//write position data
 							vertexWrite[index] = Vector3(triangle[v]->xPos, triangle[v]->zPos, triangle[v]->yPos);
-							normalWrite[index] = Vector3(0, 0, 0);
+							//normalWrite[index] = Vector3(float(i) / float(CHUNK_SIZE), float(j) / float(CHUNK_SIZE), float(k) / float(CHUNK_SIZE));
 							index++;
 						}
 
 					}
-
 					//calculate triangle normals
 					GenerateNormals(triangle);
 
-
 					//gotta retroactively shove these normals into the array
-					for (int v = 2; v >= 0; v--) {
-						//Godot::print(Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->yNorm, triangle[2 - v]->zNorm));
-
-						normalWrite[index - v] = Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->yNorm, triangle[2 - v]->zNorm);
-						delete triangle[2 - v];
-						//normalWrite[index - v] = Vector3(0, 0, 0);
+					index -= 3;
+					for (int v = 0; v < 3; v++) {
+						//normalWrite[index - v] = Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->zNorm, triangle[2 - v]->yNorm);
+						normalWrite[index] = Vector3(triangle[v]->xNorm, triangle[v]->zNorm, triangle[v]->yNorm);
+						delete triangle[v];
+						index++;
 					}
+					//Godot::print(normalGDArray[index - 2], normalGDArray[index - 1], normalGDArray[index]);
 				}
 			}
 		}
@@ -241,7 +240,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	Ref<ArrayMesh> m = ArrayMesh::_new();
 
 	m->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, meshGDArray);
-
+	
 	return m;
 
 	//mesh_gdarr[Mesh::ARRAY_VERTEX] = vertex_gdarr;
