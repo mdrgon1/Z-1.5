@@ -1,4 +1,4 @@
-#include "terrainGen.hpp"
+#include "terrainGen.h"
 #include <SurfaceTool.hpp>
 #include <Mesh.hpp>
 #include <algorithm>
@@ -22,6 +22,17 @@ void TerrainGen::_register_methods() {
 
 void TerrainGen::_init() {
 	//std::cout << sizeof(TerrainGen) << std::endl;
+}
+
+TerrainGen::TerrainGen() {
+	std::cout << "constructor" << std::endl;
+	//hold vertex positions
+	vertexGDArray = PoolVector3Array();
+	vertexGDArray.resize(MAX_NUM_VERTICES);
+
+	//hold vertex normals
+	normalGDArray = PoolVector3Array();
+	normalGDArray.resize(MAX_NUM_VERTICES);
 }
 
 void TerrainGen::SetHeightmap(Ref<Image> newHeightmap) {
@@ -85,9 +96,34 @@ void TerrainGen::GenDensitymap() {
 	}
 }
 
-void TerrainGen::GenerateMesh() {
+void TerrainGen::GenerateMesh(){
+	//create write objects for mesh arrays
+	PoolVector3Array::Write vertexWrite = vertexGDArray.write();
+	PoolVector3Array::Write normalWrite = normalGDArray.write();
 
-	
+	/*vertexWrite[0] = Vector3(0, 0, 0);
+	vertexWrite[1] = Vector3(1, 0, 0);
+	vertexWrite[2] = Vector3(0, 0, 1);
+
+	normalWrite[0] = Vector3(0, 1, 0);
+	normalWrite[1] = Vector3(0, 1, 0);
+	normalWrite[2] = Vector3(0, 1, 0);*/
+
+
+	//vertexGDArray.set(0, Vector3(0, 0, 0));
+	//vertexGDArray.set(1, Vector3(1, 0, 0));
+	//vertexGDArray.set(2, Vector3(0, 0, 1));
+
+	//normalGDArray.set(0, Vector3(0, 1, 0));
+	//normalGDArray.set(1, Vector3(0, 1, 0));
+	//normalGDArray.set(2, Vector3(0, 1, 0));
+
+	numVertices = 6;
+
+	return;
+}
+/*
+void TerrainGen::GenerateMesh() {
 
 	float corner_densities[8];
 	int coordinates[3] = {0};
@@ -98,15 +134,29 @@ void TerrainGen::GenerateMesh() {
 	//	vertices[i] = Vector3(0, 2, 0);
 	//}
 
-	//hold vertex positions
-	vertexGDArray = PoolVector3Array();
-	vertexGDArray.resize(MAX_NUM_VERTICES);
+	//create write objects for mesh arrays
 	PoolVector3Array::Write vertexWrite = vertexGDArray.write();
-
-	//hold vertex normals
-	normalGDArray = PoolVector3Array();
-	normalGDArray.resize(MAX_NUM_VERTICES);
 	PoolVector3Array::Write normalWrite = normalGDArray.write();
+
+	vertexWrite[0] = Vector3(0, 0, 0);
+	vertexWrite[1] = Vector3(1, 0, 0);
+	vertexWrite[2] = Vector3(0, 0, 1);
+
+	normalWrite[0] = Vector3(0, 1, 0);
+	normalWrite[1] = Vector3(0, 1, 0);
+	normalWrite[2] = Vector3(0, 1, 0);
+
+	vertexGDArray.set(0, Vector3(0, 0, 0));
+	vertexGDArray.set(1, Vector3(1, 0, 0));
+	vertexGDArray.set(2, Vector3(0, 0, 1));
+
+	normalGDArray.set(0, Vector3(0, 1, 0));
+	normalGDArray.set(1, Vector3(0, 1, 0));
+	normalGDArray.set(2, Vector3(0, 1, 0));
+	
+	numVertices = 6;
+
+	return;
 
 	int index = 0;	//keep track of the number of vertices and which index of the arrays to write to
 	for (int i = 0; i < CHUNK_SIZE - 1; i++) {	//x coordinates
@@ -174,6 +224,7 @@ void TerrainGen::GenerateMesh() {
 	}
 	numVertices = index;
 }
+*/
 
 void TerrainGen::GenerateNormals(Vertex* vertices[3]) {
 	Vertex* v1 = vertices[0];
@@ -219,8 +270,8 @@ void TerrainGen::SetHeight(float newHeight) {
 
 Ref<ArrayMesh> TerrainGen::GetMesh() {
 
-	vertexGDArray.resize(numVertices);
-	normalGDArray.resize(numVertices);
+	/*vertexGDArray.resize(numVertices);
+	normalGDArray.resize(numVertices);*/
 
 	meshGDArray.resize(Mesh::ARRAY_MAX);
 	/*
@@ -237,8 +288,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	meshGDArray[Mesh::ARRAY_VERTEX] = vertexGDArray;
 	meshGDArray[Mesh::ARRAY_NORMAL] = normalGDArray;
 
-	Ref<ArrayMesh> m = ArrayMesh::_new();
-
+	m->surface_remove(0);
 	m->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, meshGDArray);
 	
 	return m;

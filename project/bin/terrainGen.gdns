@@ -4,5 +4,6 @@
 
 [resource]
 
+resource_name = "terrainGen"
 class_name = "TerrainGen"
 library = ExtResource( 1 )
