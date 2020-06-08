@@ -14,7 +14,7 @@ export var height = 20
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	movement.enter()
+	movement.enter([])
 	movement.set_state_root($Movement)
 	movement.player = player
 

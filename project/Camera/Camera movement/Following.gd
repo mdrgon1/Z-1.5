@@ -1,16 +1,9 @@
 extends State
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
 func update(delta):
 	if(Input.is_action_pressed("move_strafe")):
-		return "Strafing"
+		return "Pinpoint"
+		#return "Strafing"
 	
 	#angle from the forward vector to the player's target velocity
 	var forward_to_velocity = owner.forward2D.angle_to(root_state.player.movement.vel_2D)
