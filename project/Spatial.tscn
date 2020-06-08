@@ -19,7 +19,9 @@ var height = 1
 export var load_heightmap = false setget set_load_heightmap
 
 func _ready():
-	load_heightmap()
+	#load_heightmap();
+	#update_mesh()
+	pass
 
 func set_load_heightmap(value):
 	load_heightmap = false
@@ -39,9 +41,9 @@ func change_height(new_height):
 
 func update_mesh():
 	
-	var time = OS.get_ticks_msec()	
-	test.generate_mesh();
-	print_debug(OS.get_ticks_msec() - time);
+	#var time = OS.get_ticks_msec()	
+	#test.generate_mesh();
+	#print_debug(OS.get_ticks_msec() - time);
 
 #	var vertex_array
 #
@@ -70,6 +72,7 @@ func update_mesh():
 #	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 #
 #	m.regen_normalmaps()
+	test.generate_mesh()
 	
 	var m = test.get_mesh()
 	
@@ -81,11 +84,18 @@ func update_mesh():
 func _process(delta):
 	if Input.is_action_pressed(\"ui_left\"):
 		change_height(height + delta * 3)
-		update_mesh()
+		update_mesh();
 		
 	if Input.is_action_pressed(\"ui_right\"):
 		change_height(height - delta * 3)
-		update_mesh()"
+		update_mesh()
+		
+	if Input.is_key_pressed(KEY_ESCAPE):
+		get_tree().quit()
+
+func _exit_tree():
+	test.free()
+"
 
 [sub_resource type="PrismMesh" id=3]
 

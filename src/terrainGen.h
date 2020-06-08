@@ -23,31 +23,29 @@ namespace godot {
 		float zNorm;
 
 		Vertex& operator+(Vertex& v) {
-			Vertex vertex;
 
-			vertex.xPos = xPos + v.xPos;
-			vertex.yPos = yPos + v.yPos;
-			vertex.yPos = zPos + v.zPos;
+			xPos = xPos + v.xPos;
+			yPos = yPos + v.yPos;
+			yPos = zPos + v.zPos;
 
-			vertex.xNorm = xNorm + v.xNorm;
-			vertex.yNorm = yNorm + v.yNorm;
-			vertex.yNorm = zNorm + v.zNorm;
+			xNorm = xNorm + v.xNorm;
+			yNorm = yNorm + v.yNorm;
+			yNorm = zNorm + v.zNorm;
 
-			return vertex;
+			return *this;
 		}
 
 		Vertex& operator-(Vertex& v) {
-			Vertex vertex;
 
-			vertex.xPos = xPos - v.xPos;
-			vertex.yPos = yPos - v.yPos;
-			vertex.zPos = zPos - v.zPos;
+			xPos = xPos - v.xPos;
+			yPos = yPos - v.yPos;
+			zPos = zPos - v.zPos;
 
-			vertex.xNorm = xNorm - v.xNorm;
-			vertex.yNorm = yNorm - v.yNorm;
-			vertex.zNorm = zNorm - v.zNorm;
+			xNorm = xNorm - v.xNorm;
+			yNorm = yNorm - v.yNorm;
+			zNorm = zNorm - v.zNorm;
 
-			return vertex;
+			return *this;
 		}
 	};
 
@@ -351,9 +349,9 @@ namespace godot {
 		float _densitymap[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 		float height = 1;
 
-		Array meshGDArray = Array();
-		Ref<ArrayMesh> m = ArrayMesh::_new();
+		Ref<ArrayMesh> m;
 
+		//hold mesh data
 		PoolVector3Array vertexGDArray;
 		PoolVector3Array normalGDArray;
 		int numVertices;
@@ -365,10 +363,12 @@ namespace godot {
 		
 		static void _register_methods();
 
+		//create and resizes mesh arrays
 		void _init();
 
-		//consrtructor, creates and resizes mesh arrays
 		TerrainGen();
+
+		~TerrainGen();
 
 		void SetHeightmap(Ref<Image> newHeightmap);
 		Array GetHeightmap();
