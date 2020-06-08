@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\godot-cpp",
+    "\\src"
   ],
+  "SelectedNode": "\\SConstruct",
   "PreviewInSolutionExplorer": false
 }
