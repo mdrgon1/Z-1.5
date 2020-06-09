@@ -1,3 +1,4 @@
+tool
 extends Camera
 
 const UP = Vector3(0, 1, 0)
@@ -9,8 +10,7 @@ onready var focus = $Focus
 var forward : Vector3
 var forward2D : Vector2
 
-export var distance = 20
-export var height = 20
+export var angle = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,6 +20,14 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	if Engine.editor_hint:
+		#set rotation
+		var rot = get_rotation()
+		rot.x = angle
+		set_rotation(rot)
+		
+		return
+	
 	forward = -get_global_transform().basis.z
 	forward2D.x = (forward.z)
 	forward2D.y = (forward.x)
