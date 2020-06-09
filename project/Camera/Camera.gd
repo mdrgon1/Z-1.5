@@ -24,5 +24,6 @@ func _process(delta):
 	forward2D.x = (forward.z)
 	forward2D.y = (forward.x)
 	
+	#lerp position to target position
 	set_translation(get_translation().linear_interpolate(movement.target_translation, movement.POS_LERP * delta * 60))
 	set_rotation(movement.target_rotation)

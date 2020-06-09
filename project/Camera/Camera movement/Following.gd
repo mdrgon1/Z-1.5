@@ -2,7 +2,7 @@ extends State
 
 func update(delta):
 	if(Input.is_action_pressed("move_strafe")):
-		return "Pinpoint"
+		return ["Pinpoint", owner.player]
 		#return "Strafing"
 	
 	#angle from the forward vector to the player's target velocity
