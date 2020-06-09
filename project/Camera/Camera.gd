@@ -35,7 +35,8 @@ func _process(delta):
 	#lerp position to target position
 	set_translation(get_translation().linear_interpolate(movement.target_translation, movement.POS_LERP * delta * 60))
 	
+	#slerp rotation to target rotation
 	var rot : = Quat(movement.target_rotation)
-	transform.basis = Basis(Quat(transform.basis).slerp(rot, movement.ROT_LERP))
+	transform.basis = Basis(Quat(transform.basis).slerp(rot, movement.ROT_SLERP))
 	#set_rotation(get_rotation().linear_interpolate(movement.target_rotation, movement.ROT_LERP * delta * 60))
 	#set_rotation(movement.target_rotation)
