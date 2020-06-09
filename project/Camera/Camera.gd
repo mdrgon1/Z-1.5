@@ -10,7 +10,7 @@ onready var focus = $Focus
 var forward : Vector3
 var forward2D : Vector2
 
-export var angle = 0
+export var angle : float = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -38,5 +38,6 @@ func _process(delta):
 	#slerp rotation to target rotation
 	var rot : = Quat(movement.target_rotation)
 	transform.basis = Basis(Quat(transform.basis).slerp(rot, movement.ROT_SLERP))
+	set_transform(transform.orthonormalized())
 	#set_rotation(get_rotation().linear_interpolate(movement.target_rotation, movement.ROT_LERP * delta * 60))
 	#set_rotation(movement.target_rotation)
