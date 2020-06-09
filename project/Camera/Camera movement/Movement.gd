@@ -1,7 +1,7 @@
 extends State
 
 const ROT_SLERP = 0.03
-const POS_LERP = 0.1
+const POS_LERP = 0.2
 
 var player : Spatial
 
