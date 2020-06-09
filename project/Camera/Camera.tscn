@@ -43,7 +43,6 @@ script = ExtResource( 7 )
 
 [node name="Focus" type="Spatial" parent="."]
 transform = Transform( 1, -7.27596e-12, 1.45519e-11, 0, 1, -1.29345e-08, -1.45519e-11, -1.29345e-08, 1, 0, -2.573, -19.403 )
-visible = false
 
 [node name="CSGMesh" type="CSGMesh" parent="Focus"]
 transform = Transform( 1, -4.36557e-11, 4.36557e-11, 2.91038e-11, 1, -1.29344e-08, -8.73115e-11, -1.29344e-08, 1, 0, 0, 0 )
