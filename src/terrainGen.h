@@ -10,43 +10,13 @@
 namespace godot {
 	struct Vertex {
 	public:
-		Vertex() : xPos(0), yPos(0), zPos(0), xNorm(0), yNorm(0), zNorm(0) {}
+		Vertex() : pos(0, 0, 0), norm(0, 0, 0) {}
 
 		//spatial coordinates
-		float xPos;
-		float yPos;
-		float zPos;
+		Vector3 pos;
 
 		//normal vector
-		float xNorm;
-		float yNorm;
-		float zNorm;
-
-		Vertex& operator+(Vertex& v) {
-
-			xPos = xPos + v.xPos;
-			yPos = yPos + v.yPos;
-			yPos = zPos + v.zPos;
-
-			xNorm = xNorm + v.xNorm;
-			yNorm = yNorm + v.yNorm;
-			yNorm = zNorm + v.zNorm;
-
-			return *this;
-		}
-
-		Vertex& operator-(Vertex& v) {
-
-			xPos = xPos - v.xPos;
-			yPos = yPos - v.yPos;
-			zPos = zPos - v.zPos;
-
-			xNorm = xNorm - v.xNorm;
-			yNorm = yNorm - v.yNorm;
-			zNorm = zNorm - v.zNorm;
-
-			return *this;
-		}
+		Vector3 norm;
 	};
 
 	static const int MAX_NUM_VERTICES_PER_CUBE = 15;

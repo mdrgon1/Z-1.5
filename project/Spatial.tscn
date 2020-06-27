@@ -43,7 +43,6 @@ func update_mesh():
 	
 	#var time = OS.get_ticks_msec()	
 	#test.generate_mesh();
-	#print_debug(OS.get_ticks_msec() - time);
 
 #	var vertex_array
 #
@@ -83,6 +82,7 @@ func update_mesh():
 
 func _process(delta):
 	if Input.is_key_pressed(KEY_T):
+		#change_height(height + delta * 3)
 		change_height(height + delta * 3)
 		update_mesh();
 		
@@ -102,7 +102,8 @@ func _exit_tree():
 [node name="Spatial" type="Spatial"]
 
 [node name="Camera" parent="." instance=ExtResource( 1 )]
-transform = Transform( -1.62921e-07, -0.678707, 0.73441, 0, 0.73441, 0.678707, -1, 1.10575e-07, -1.1965e-07, 13.279, 15.17, -0.134 )
+transform = Transform( -1.62921e-07, -0.678707, 0.73441, 0, 0.73441, 0.678707, -1, 1.10575e-07, -1.19651e-07, 13.279, 15.17, -0.134 )
+projection = 0
 angle = -0.746
 
 [node name="Terrain" type="MeshInstance" parent="."]
