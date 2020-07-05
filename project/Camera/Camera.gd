@@ -15,7 +15,6 @@ export var distance : float = 10
 func _ready():
 	movement.set_root_state($Movement)
 	movement.init()
-	movement.player = player
 
 func _process(delta):
 	if Engine.editor_hint:
@@ -32,11 +31,11 @@ func _process(delta):
 	
 	# lerp position to target position
 	var target_pos : Vector3 = movement.target_position
-	set_translation(translation.linear_interpolate(target_pos, movement.POS_LERP * delta * 60))
+	set_translation(translation.linear_interpolate(target_pos, movement.POS_LERP * delta))
 	
 	# slerp rotation to target rotation
 	var rot := Quat(transform.basis)
-	transform.basis = Basis(rot.slerp(movement.target_rotation, movement.ROT_SLERP))
+	transform.basis = Basis(rot.slerp(movement.target_rotation, movement.ROT_SLERP * delta))
 	# rotation.z = 0	#keep camera facing upright
 	set_transform(transform.orthonormalized())
 	

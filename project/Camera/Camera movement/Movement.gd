@@ -1,15 +1,13 @@
 extends State
 
-const ROT_SLERP = 0.03
-const POS_LERP = 0.2
-
-var player : Spatial
+const ROT_SLERP = 7
+const POS_LERP = 1
 
 onready var target_position : Vector3 = owner.transform.origin
 onready var target_rotation := Quat(owner.transform.basis)
 
 func to_player() -> Vector3:
-	return owner.get_translation() - player.get_translation()
+	return owner.player.get_translation() - owner.get_translation()
 
 #returns vector from the focus to the player
 func focus_to_player() -> Vector3:
