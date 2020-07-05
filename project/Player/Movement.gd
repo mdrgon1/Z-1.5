@@ -8,18 +8,21 @@ var vel_3D : Vector3
 var vel_2D : Vector2
 var forward : Vector3
 var forward2D : Vector2
+var camera_forward2D : Vector2
 
 #onready var camera = get_viewport().get_camera()
 onready var camera = get_node("../../Camera")
 
-func _physics_process(delta):
+func run(delta):
 	
 	forward = owner.get_global_transform().basis.z
 	forward2D.x = (forward.z)
 	forward2D.y = (forward.x)
 	
-	#movement is always relative to the camera view
-	vel_2D = (get_input_vector() * speed).rotated(3*PI/2 + camera.forward2D.angle())
+	#movement is always relative to the camera view, unless player is going backwards
+	vel_2D = (get_input_vector() * speed).rotated(3*PI/2 + camera_forward2D.angle())
+	if(!(get_input_vector().y < 0)):
+		camera_forward2D = camera.forward2D
 	
 	vel_3D.y = 0;
 	vel_3D.x = vel_2D.y

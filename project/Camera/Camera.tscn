@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Camera/Camera.gd" type="Script" id=1]
 [ext_resource path="res://CALIBRI.TTF" type="DynamicFontData" id=2]
@@ -14,8 +14,6 @@ outline_size = 3
 outline_color = Color( 0, 0, 0, 1 )
 font_data = ExtResource( 2 )
 
-[sub_resource type="SphereMesh" id=2]
-
 [node name="Camera" type="Camera"]
 projection = 1
 current = true
@@ -28,6 +26,9 @@ margin_bottom = 40.0
 custom_fonts/mono_font = SubResource( 1 )
 custom_colors/default_color = Color( 0, 0, 0, 1 )
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Movement" type="Node" parent="."]
 script = ExtResource( 4 )
@@ -40,10 +41,3 @@ script = ExtResource( 6 )
 
 [node name="Pinpoint" type="Node" parent="Movement"]
 script = ExtResource( 7 )
-
-[node name="Focus" type="Spatial" parent="."]
-transform = Transform( 1, -7.27596e-12, 1.45519e-11, 0, 1, -1.29345e-08, -1.45519e-11, -1.29345e-08, 1, 0, -2.573, -19.403 )
-
-[node name="CSGMesh" type="CSGMesh" parent="Focus"]
-transform = Transform( 1, -4.36557e-11, 4.36557e-11, 2.91038e-11, 1, -1.29344e-08, -8.73115e-11, -1.29344e-08, 1, 0, 0, 0 )
-mesh = SubResource( 2 )

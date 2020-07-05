@@ -1,20 +1,23 @@
 extends State
 
-const ROT_SLERP = 0.03
-const POS_LERP = 0.2
+const ROT_SLERP = 7
+const POS_LERP = 1
 
-var player : Spatial
+onready var target_position : Vector3 = owner.transform.origin
+onready var target_rotation := Quat(owner.transform.basis)
 
-onready var target_translation =  owner.get_translation()
-onready var target_rotation = owner.get_rotation()
-
-func to_player():
-	return owner.get_translation() - player.get_translation()
+func to_player() -> Vector3:
+	return owner.player.get_translation() - owner.get_translation()
 
 #returns vector from the focus to the player
-func focus_to_player():
+func focus_to_player() -> Vector3:
 	return owner.player.get_translation() - owner.to_global(owner.focus.get_translation())
 
 #returns vector from the focus to a target
-func focus_to(target : Spatial):
+func focus_to(target : Spatial) -> Vector3:
 	return target.get_translation() - owner.to_global(owner.focus.get_translation())
+
+func get_offset_pos(pos : Vector3) -> Vector3:
+	pos += owner.offset.y * owner.transform.basis.y
+	pos += owner.offset.x * owner.transform.basis.x
+	return pos
