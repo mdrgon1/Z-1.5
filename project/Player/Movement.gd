@@ -12,7 +12,7 @@ var forward2D : Vector2
 #onready var camera = get_viewport().get_camera()
 onready var camera = get_node("../../Camera")
 
-func _physics_process(delta):
+func run(delta):
 	
 	forward = owner.get_global_transform().basis.z
 	forward2D.x = (forward.z)

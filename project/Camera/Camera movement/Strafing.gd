@@ -1,9 +1,9 @@
 extends State
 
-func enter(args):
+func enter(_args):
 	root_state.target_rotation = owner.get_rotation()
 
-func update(delta):
+func run(delta):
 	if(!Input.is_action_pressed("move_strafe")):
 		return "Following"
 

@@ -14,8 +14,8 @@ export var angle : float = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	movement.enter([])
-	movement.set_state_root($Movement)
+	movement.init()
+	movement.set_root_state($Movement)
 	movement.player = player
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,5 +40,7 @@ func _process(delta):
 	transform.basis = Basis(Quat(transform.basis).slerp(rot, movement.ROT_SLERP))
 	rotation.z = 0	#keep camera facing upright
 	set_transform(transform.orthonormalized())
+	
+	movement.update(delta)
 	#set_rotation(get_rotation().linear_interpolate(movement.target_rotation, movement.ROT_LERP * delta * 60))
 	#set_rotation(movement.target_rotation)

@@ -6,7 +6,7 @@ extends State
 #	rot.z = 0
 #	root_state.target_rotation = rot
 
-func update(delta):
+func run(delta):
 	if(Input.is_action_pressed("move_strafe")):
 		#return ["Pinpoint", owner.player]
 		return "Strafing"
