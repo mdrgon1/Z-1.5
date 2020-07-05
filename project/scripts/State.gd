@@ -1,12 +1,12 @@
 extends Node
 class_name State
 
-onready var substates_map = { }
-onready var num_children = get_child_count()
+onready var substates_map := { }
+onready var num_children := get_child_count()
 
-var current_state
-var default_state
-var root_state
+var current_state : State
+var default_state : State
+var root_state : State
 
 func _ready():
 	for child in get_children():
