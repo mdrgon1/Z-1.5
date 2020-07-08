@@ -4,7 +4,9 @@
 #include <algorithm>
 #include <OS.hpp>
 #include <Image.hpp>
+#include <Texture.hpp>
 #include <string.h>
+#include <thread>
 
 using namespace godot;
 
@@ -35,16 +37,27 @@ TerrainGen::~TerrainGen() {
 	m->free();
 }
 
-void TerrainGen::SetHeightmap(Ref<Image> newHeightmap) {
+void TerrainGen::SetHeightmap(Ref<Texture> newHeightmapTex) {
+	Ref<Image> newHeightmap = newHeightmapTex->get_data();
 
 	if (newHeightmap->get_height() != CHUNK_SIZE || newHeightmap->get_width() != CHUNK_SIZE){
 		return;
 	}
 	
 	newHeightmap->lock();
+	std::thread threads[CHUNK_SIZE][CHUNK_SIZE];
 	for (int i = 0; i < CHUNK_SIZE; ++i) {
 		for (int j = 0; j < CHUNK_SIZE; ++j) {
-			_heightmap[i][j] = newHeightmap->get_pixel(i, j).get_v();
+			auto f = [this, i, j, newHeightmap](float heightmap[CHUNK_SIZE][CHUNK_SIZE]) {
+				heightmap[i][j] = newHeightmap->get_pixel(i, j).get_v();
+			};
+			threads[i][j] = std::thread(f, _heightmap);
+		}
+	}
+
+	for (int i = 0; i < CHUNK_SIZE; ++i) {
+		for (int j = 0; j < CHUNK_SIZE; ++j) {
+			threads[i][j].join();
 		}
 	}
 }
