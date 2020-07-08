@@ -28,11 +28,11 @@ func set_load_heightmap(value):
 	load_heightmap()
 
 func load_heightmap():
-	var time = OS.get_ticks_msec()
+	heightmap_img = heightmap_tex.get_data()
+	
 	test.set_height(height)
-	test.set_heightmap(heightmap_tex)
+	test.set_heightmap(heightmap_img)
 	test.gen_densitymap()
-	print(OS.get_ticks_msec() - time)
 	
 
 func change_height(new_height):

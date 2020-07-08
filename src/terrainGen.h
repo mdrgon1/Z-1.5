@@ -340,7 +340,7 @@ namespace godot {
 
 		~TerrainGen();
 
-		void SetHeightmap(Ref<Texture> newHeightmapTex);
+		void SetHeightmap(Ref<Image> newHeightmap);
 		Array GetHeightmap();
 
 		void GenDensitymap();
