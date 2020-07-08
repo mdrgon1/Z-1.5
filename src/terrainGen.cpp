@@ -225,7 +225,7 @@ void TerrainGen::GenerateMesh() {
 }
 
 
-void TerrainGen::GenerateNormals(Vertex vertices[3]) {
+inline void TerrainGen::GenerateNormals(Vertex vertices[3]) {
 	Vertex* v1 = &vertices[0];
 	Vertex* v2 = &vertices[1];
 	Vertex* v3 = &vertices[2];
@@ -248,10 +248,10 @@ void TerrainGen::GenerateNormals(Vertex vertices[3]) {
 	std::cout << v3->pos.x << " " << v3->pos.y << " " << v3->pos.z << std::endl;*/
 
 	//write vector to vertices array
-	for (int i = 0; i < 3; i++) {
-		vertices[i].norm = Vector3(norm.x, norm.z, norm.y);
-	}
-	
+	vertices[0].norm = Vector3(norm.x, norm.z, norm.y);
+	vertices[1].norm = Vector3(norm.x, norm.z, norm.y);
+	vertices[2].norm = Vector3(norm.x, norm.z, norm.y);
+
 	//std::cout << norm.x << " " << norm.y << " " << norm.z << std::endl;
 
 	//std::cout << vertices[0]->norm.x << " " << vertices[0]->norm.y << " " << vertices[0]->norm.z << std::endl;
@@ -267,7 +267,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	return m;
 }
 
-int TerrainGen::GetCubeId(float values[8]) {
+inline int TerrainGen::GetCubeId(float values[8]) {
 	short int cubeIndex = 0;
 	for (int i = 0; i < 8; i++) {
 		if (values[i] > 0) {
@@ -279,7 +279,7 @@ int TerrainGen::GetCubeId(float values[8]) {
 }
 
 //float Cubifier::DensityFunc(int coordinates[3]) {
-float TerrainGen::DensityFunc(int x, int y, int z) {
+inline float TerrainGen::DensityFunc(int x, int y, int z) {
 	/*int x = coordinates[0];
 	int y = coordinates[1];
 	int z = coordinates[2];*/
@@ -287,7 +287,7 @@ float TerrainGen::DensityFunc(int x, int y, int z) {
 	return density;
 }
 
-Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
+inline Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
 	Vertex v;
 	
 	//hold the corner indices at the ends of the edge the vertex falls on
@@ -300,11 +300,10 @@ Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
 	float density_range = abs(v1 - v2);
 	float lerp_value = abs(v1) / density_range;
 
-	//this loop assumes the vector3 axis enum goes 0:X 1:Y 2:Z, stupid messy code but I'm just too busy to write a line three times
-	for (int i = Vector3::AXIS_X; i <= Vector3::AXIS_Z; i++) {
-		//lerp between VERTEX_TABLE[edge[0]][i] and VERTEX_TABLE[edge[1]][i]
-		v.pos[i] = VERTEX_TABLE[edge[0]][i] + lerp_value * (VERTEX_TABLE[edge[1]][i] - VERTEX_TABLE[edge[0]][i]);
-	}
+	//lerp between VERTEX_TABLE[edge[0]][i] and VERTEX_TABLE[edge[1]][i]
+	v.pos[0] = VERTEX_TABLE[edge[0]][0] + lerp_value * (VERTEX_TABLE[edge[1]][0] - VERTEX_TABLE[edge[0]][0]);
+	v.pos[1] = VERTEX_TABLE[edge[0]][1] + lerp_value * (VERTEX_TABLE[edge[1]][1] - VERTEX_TABLE[edge[0]][1]);
+	v.pos[2] = VERTEX_TABLE[edge[0]][2] + lerp_value * (VERTEX_TABLE[edge[1]][2] - VERTEX_TABLE[edge[0]][2]);
 
 	return v;
 }
