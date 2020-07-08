@@ -161,7 +161,7 @@ void TerrainGen::GenerateMesh() {
 
 					//iterate through every set of 3 vertices and write position/normal data to arrays
 					for (int vertex_index = 0; vertex_index < MAX_NUM_VERTICES_PER_CUBE; vertex_index += 3) {
-						Vertex* triangle[3];
+						Vertex triangle[3];
 
 						if (TRIANGUALATION_TABLE[cubeId][vertex_index] == -1)
 							break;
@@ -169,20 +169,20 @@ void TerrainGen::GenerateMesh() {
 						//iterate through every vertex in the triangle
 						for (int v = 0; v < 3; v++) {
 
-							triangle[v] = new Vertex();
+							triangle[v] = Vertex();
 							edge_index = TRIANGUALATION_TABLE[cubeId][vertex_index + v];
 
 							if (edge_index != -1) {
-								*(triangle[v]) = EdgeVertexPos(edge_index, corner_densities);
+								triangle[v] = EdgeVertexPos(edge_index, corner_densities);
 
-								triangle[v]->pos.x += i;
-								triangle[v]->pos.y += j;
-								triangle[v]->pos.z += k;
+								triangle[v].pos.x += i;
+								triangle[v].pos.y += j;
+								triangle[v].pos.z += k;
 
 								//write position data, account for the change in axis (Y is up and down in Godot, not Z, you asshole)
-								vertexWrite[index].x = triangle[v]->pos.x;
-								vertexWrite[index].y = triangle[v]->pos.z;
-								vertexWrite[index].z = triangle[v]->pos.y;
+								vertexWrite[index].x = triangle[v].pos.x;
+								vertexWrite[index].y = triangle[v].pos.z;
+								vertexWrite[index].z = triangle[v].pos.y;
 								//normalWrite[index] = Vector3(float(i) / float(CHUNK_SIZE), float(j) / float(CHUNK_SIZE), float(k) / float(CHUNK_SIZE));
 								index++;
 							}
@@ -195,12 +195,12 @@ void TerrainGen::GenerateMesh() {
 						index -= 3;
 						for (int v = 0; v < 3; v++) {
 							//normalWrite[index - v] = Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->zNorm, triangle[2 - v]->yNorm);
-							normalWrite[index] = triangle[0]->norm;
+							normalWrite[index] = triangle[0].norm;
 							index++;
 						}
-						delete triangle[0];
+						/*delete triangle[0];
 						delete triangle[1];
-						delete triangle[2];
+						delete triangle[2];*/
 					}
 				}
 			}
@@ -225,10 +225,10 @@ void TerrainGen::GenerateMesh() {
 }
 
 
-void TerrainGen::GenerateNormals(Vertex* vertices[3]) {
-	Vertex* v1 = vertices[0];
-	Vertex* v2 = vertices[1];
-	Vertex* v3 = vertices[2];
+void TerrainGen::GenerateNormals(Vertex vertices[3]) {
+	Vertex* v1 = &vertices[0];
+	Vertex* v2 = &vertices[1];
+	Vertex* v3 = &vertices[2];
 
 	//create two edges joining the vertices
 	Vector3 e1 = v2->pos - v1->pos;
@@ -249,7 +249,7 @@ void TerrainGen::GenerateNormals(Vertex* vertices[3]) {
 
 	//write vector to vertices array
 	for (int i = 0; i < 3; i++) {
-		vertices[i]->norm = Vector3(norm.x, norm.z, norm.y);
+		vertices[i].norm = Vector3(norm.x, norm.z, norm.y);
 	}
 	
 	//std::cout << norm.x << " " << norm.y << " " << norm.z << std::endl;

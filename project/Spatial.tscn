@@ -28,10 +28,8 @@ func set_load_heightmap(value):
 	load_heightmap()
 
 func load_heightmap():
-	heightmap_img = heightmap_tex.get_data()
-	
 	test.set_height(height)
-	test.set_heightmap(heightmap_img)
+	test.set_heightmap(heightmap_tex.get_data())
 	test.gen_densitymap()
 	
 
@@ -81,6 +79,7 @@ func update_mesh():
 	
 
 func _process(delta):
+	var time = OS.get_ticks_msec()
 	if Input.is_key_pressed(KEY_T):
 		#change_height(height + delta * 3)
 		change_height(height + delta * 3)
@@ -89,6 +88,7 @@ func _process(delta):
 	if Input.is_key_pressed(KEY_Y):
 		change_height(height - delta * 3)
 		update_mesh()
+	print(OS.get_ticks_msec() - time)
 		
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
