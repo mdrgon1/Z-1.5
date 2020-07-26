@@ -28,10 +28,8 @@ func set_load_heightmap(value):
 	load_heightmap()
 
 func load_heightmap():
-	heightmap_img = heightmap_tex.get_data()
-	
 	test.set_height(height)
-	test.set_heightmap(heightmap_img)
+	test.set_heightmap(heightmap_tex.get_data())
 	test.gen_densitymap()
 	
 
@@ -81,6 +79,7 @@ func update_mesh():
 	
 
 func _process(delta):
+	var time = OS.get_ticks_msec()
 	if Input.is_key_pressed(KEY_T):
 		#change_height(height + delta * 3)
 		change_height(height + delta * 3)
@@ -89,6 +88,7 @@ func _process(delta):
 	if Input.is_key_pressed(KEY_Y):
 		change_height(height - delta * 3)
 		update_mesh()
+	#print(OS.get_ticks_msec() - time)
 		
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
@@ -102,7 +102,7 @@ func _exit_tree():
 [node name="Spatial" type="Spatial"]
 
 [node name="Camera" parent="." instance=ExtResource( 1 )]
-transform = Transform( -1.62921e-07, -0.678707, 0.73441, 0, 0.73441, 0.678707, -1, 1.10576e-07, -1.19651e-07, 13.279, 15.17, -0.134 )
+transform = Transform( -1.62921e-07, -0.678707, 0.73441, 0, 0.73441, 0.678707, -1, 1.10575e-07, -1.19651e-07, 13.279, 15.17, -0.134 )
 angle = -0.746
 offset = Vector2( 0, 3 )
 distance = 25.0

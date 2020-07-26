@@ -1,3 +1,5 @@
+tool
+
 extends Camera
 
 const UP = Vector3(0, 1, 0)
