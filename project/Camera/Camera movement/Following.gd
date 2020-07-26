@@ -1,13 +1,7 @@
 extends State
 
 const MIN_ANGLE := deg2rad(-60)
-const LEAD_AMOUNT := 6
-const LEAD_LERP := 2
 
-var lead_vec : Vector3
-
-func enter(_args):
-	lead_vec = Vector3(0, 0, 0)
 
 func run(delta):
 	if(Input.is_action_pressed("move_strafe")):
@@ -16,12 +10,9 @@ func run(delta):
 	
 	var target_rot := Quat(owner.rotation)
 	
-	if(owner.player.movement.vel_2D != Vector2(0, 0)):
-		lead_vec = lerp(lead_vec, owner.player.movement.vel_3D.normalized() * LEAD_AMOUNT, LEAD_LERP * delta)
-	
 	# point camera at the player (plus offset)
 	var focus : Vector3 = root_state.get_offset_pos(owner.player.get_translation())
-	focus += lead_vec
+	focus += root_state.lead_vec
 	target_rot = Quat(owner.transform.looking_at(focus, owner.UP).basis)
 	
 	# clamp camera angle
