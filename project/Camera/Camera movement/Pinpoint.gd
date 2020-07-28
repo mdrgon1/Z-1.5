@@ -8,6 +8,8 @@ func enter(_args : Array):
 		return
 	
 	target = _args[0]
+	
+	.enter(_args)
 
 func run(delta):
 
