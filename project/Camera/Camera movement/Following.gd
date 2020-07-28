@@ -1,13 +1,7 @@
 extends State
 
-const MIN_ANGLE := -60 * (PI / 180)
-const LEAD_AMOUNT := 6
-const LEAD_LERP := 2
+const MIN_ANGLE := deg2rad(-60)
 
-var lead_vec : Vector3
-
-func enter(_args):
-	lead_vec = Vector3(0, 0, 0)
 
 func run(delta):
 	if(Input.is_action_pressed("move_strafe")):
@@ -16,21 +10,24 @@ func run(delta):
 	
 	var target_rot := Quat(owner.rotation)
 	
-	if(owner.player.movement.vel_2D != Vector2(0, 0)):
-		lead_vec += (owner.player.movement.vel_3D.normalized() * LEAD_AMOUNT - lead_vec) * LEAD_LERP * delta
-	
 	# point camera at the player (plus offset)
 	var focus : Vector3 = root_state.get_offset_pos(owner.player.get_translation())
-	focus += lead_vec
+	focus += root_state.lead_vec
 	target_rot = Quat(owner.transform.looking_at(focus, owner.UP).basis)
 	
-	# move camera the correct distance from player
-	var target_pos : Vector3 = owner.player.get_translation() - root_state.to_player().normalized() * owner.distance
+	# clamp camera angle
+	var target_rot_euler = target_rot.get_euler()
+	target_rot_euler.x = clamp(target_rot_euler.x, MIN_ANGLE, owner.angle)
 	
-	# clamp camera height based on min and max angle
-	var min_height : float = owner.player.get_translation().y + sin(-owner.angle) * owner.distance
-	var max_height : float = owner.player.get_translation().y + sin(-MIN_ANGLE) * owner.distance
-	target_pos.y = clamp(target_pos.y, min_height, max_height)
+	# move camera the correct distance from player
+	var target_pos : Vector3
+	if(target_rot_euler.x == target_rot.get_euler().x): # check if the rotation has been clamped or not
+		target_pos = owner.player.get_translation() - root_state.to_player().normalized() * owner.distance
+	else:
+		print(OS.get_ticks_msec())
+		target_pos = focus + owner.transform.basis.z * owner.distance
+	
+	target_rot = Quat(target_rot_euler)
 	
 #	if(target_rot.get_euler().x > owner.angle):
 #		#print(-target_rot.get_euler().x + owner.angle)
