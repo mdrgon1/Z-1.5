@@ -88,7 +88,7 @@ func _process(delta):
 	if Input.is_key_pressed(KEY_Y):
 		change_height(height - delta * 3)
 		update_mesh()
-	#print(OS.get_ticks_msec() - time)
+	print(OS.get_ticks_msec() - time)
 		
 	if Input.is_key_pressed(KEY_ESCAPE):
 		get_tree().quit()
