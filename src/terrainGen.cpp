@@ -142,67 +142,67 @@ void TerrainGen::GenerateMesh() {
 		PoolVector3Array::Write normalWrite = normalGDArray.write();
 
 		int index = 0;	//keep track of the number of vertices and which index of the arrays to write to
-		for (int i = 0; i < CHUNK_SIZE - 1; i++) {	//x coordinates
-			for (int j = 0; j < CHUNK_SIZE - 1; j++) {	//z coordinates
-				for (int k = 0; k < std::min(int(ceil(height)), CHUNK_SIZE - 1); k++) {	//y coordinates
+		for (int i = 0; i < (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1); i++) {	//x coordinates
 
-					//iterate through every cube corner and sample densitymap
-					for (int l = 0; l < 8; l++) {
-						//assign xyz coordinates
-						coordinates[0] = i + VERTEX_TABLE[l][0];
-						coordinates[1] = j + VERTEX_TABLE[l][1];
-						coordinates[2] = k + VERTEX_TABLE[l][2];
+			int x = i % (CHUNK_SIZE - 1);
+			int y = (i / (CHUNK_SIZE - 1)) % (CHUNK_SIZE - 1);
+			int z = i / ((CHUNK_SIZE - 1) * (CHUNK_SIZE - 1));
 
-						corner_densities[l] = _densitymap[coordinates[0]][coordinates[1]][coordinates[2]];
+			//iterate through every cube corner and sample densitymap
+			for (int j = 0; j < 8; j++) {
+				//assign xyz coordinates
+				coordinates[0] = x + VERTEX_TABLE[j][0];
+				coordinates[1] = y + VERTEX_TABLE[j][1];
+				coordinates[2] = z + VERTEX_TABLE[j][2];
+
+				corner_densities[j] = _densitymap[coordinates[0]][coordinates[1]][coordinates[2]];
+			}
+
+			cubeId = GetCubeId(corner_densities);
+
+
+			//iterate through every set of 3 vertices and write position/normal data to arrays
+			for (int vertex_index = 0; vertex_index < MAX_NUM_VERTICES_PER_CUBE; vertex_index += 3) {
+				Vertex triangle[3];
+
+				if (TRIANGUALATION_TABLE[cubeId][vertex_index] == -1)
+					break;
+
+				//iterate through every vertex in the triangle
+				for (int v = 0; v < 3; v++) {
+
+					triangle[v] = Vertex();
+					edge_index = TRIANGUALATION_TABLE[cubeId][vertex_index + v];
+
+					if (edge_index != -1) {
+						triangle[v] = EdgeVertexPos(edge_index, corner_densities);
+
+						triangle[v].pos.x += x;
+						triangle[v].pos.y += y;
+						triangle[v].pos.z += z;
+
+						//write position data, account for the change in axis (Y is up and down in Godot, not Z, you asshole)
+						vertexWrite[index].x = triangle[v].pos.x;
+						vertexWrite[index].y = triangle[v].pos.z;
+						vertexWrite[index].z = triangle[v].pos.y;
+						//normalWrite[index] = Vector3(float(i) / float(CHUNK_SIZE), float(j) / float(CHUNK_SIZE), float(k) / float(CHUNK_SIZE));
+						index++;
 					}
 
-					cubeId = GetCubeId(corner_densities);
-
-
-					//iterate through every set of 3 vertices and write position/normal data to arrays
-					for (int vertex_index = 0; vertex_index < MAX_NUM_VERTICES_PER_CUBE; vertex_index += 3) {
-						Vertex* triangle[3];
-
-						if (TRIANGUALATION_TABLE[cubeId][vertex_index] == -1)
-							break;
-
-						//iterate through every vertex in the triangle
-						for (int v = 0; v < 3; v++) {
-
-							triangle[v] = new Vertex();
-							edge_index = TRIANGUALATION_TABLE[cubeId][vertex_index + v];
-
-							if (edge_index != -1) {
-								*(triangle[v]) = EdgeVertexPos(edge_index, corner_densities);
-
-								triangle[v]->pos.x += i;
-								triangle[v]->pos.y += j;
-								triangle[v]->pos.z += k;
-
-								//write position data, account for the change in axis (Y is up and down in Godot, not Z, you asshole)
-								vertexWrite[index].x = triangle[v]->pos.x;
-								vertexWrite[index].y = triangle[v]->pos.z;
-								vertexWrite[index].z = triangle[v]->pos.y;
-								//normalWrite[index] = Vector3(float(i) / float(CHUNK_SIZE), float(j) / float(CHUNK_SIZE), float(k) / float(CHUNK_SIZE));
-								index++;
-							}
-
-						}
-						//calculate triangle normals
-						GenerateNormals(triangle);
-
-						//gotta retroactively shove these normals into the array
-						index -= 3;
-						for (int v = 0; v < 3; v++) {
-							//normalWrite[index - v] = Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->zNorm, triangle[2 - v]->yNorm);
-							normalWrite[index] = triangle[0]->norm;
-							index++;
-						}
-						delete triangle[0];
-						delete triangle[1];
-						delete triangle[2];
-					}
 				}
+				//calculate triangle normals
+				GenerateNormals(triangle);
+
+				//gotta retroactively shove these normals into the array
+				index -= 3;
+				for (int v = 0; v < 3; v++) {
+					//normalWrite[index - v] = Vector3(triangle[2 - v]->xNorm, triangle[2 - v]->zNorm, triangle[2 - v]->yNorm);
+					normalWrite[index] = triangle[0].norm;
+					index++;
+				}
+				/*delete triangle[0];
+				delete triangle[1];
+				delete triangle[2];*/
 			}
 		}
 
@@ -225,10 +225,10 @@ void TerrainGen::GenerateMesh() {
 }
 
 
-void TerrainGen::GenerateNormals(Vertex* vertices[3]) {
-	Vertex* v1 = vertices[0];
-	Vertex* v2 = vertices[1];
-	Vertex* v3 = vertices[2];
+inline void TerrainGen::GenerateNormals(Vertex vertices[3]) {
+	Vertex* v1 = &vertices[0];
+	Vertex* v2 = &vertices[1];
+	Vertex* v3 = &vertices[2];
 
 	//create two edges joining the vertices
 	Vector3 e1 = v2->pos - v1->pos;
@@ -248,10 +248,10 @@ void TerrainGen::GenerateNormals(Vertex* vertices[3]) {
 	std::cout << v3->pos.x << " " << v3->pos.y << " " << v3->pos.z << std::endl;*/
 
 	//write vector to vertices array
-	for (int i = 0; i < 3; i++) {
-		vertices[i]->norm = Vector3(norm.x, norm.z, norm.y);
-	}
-	
+	vertices[0].norm = Vector3(norm.x, norm.z, norm.y);
+	vertices[1].norm = Vector3(norm.x, norm.z, norm.y);
+	vertices[2].norm = Vector3(norm.x, norm.z, norm.y);
+
 	//std::cout << norm.x << " " << norm.y << " " << norm.z << std::endl;
 
 	//std::cout << vertices[0]->norm.x << " " << vertices[0]->norm.y << " " << vertices[0]->norm.z << std::endl;
@@ -267,7 +267,7 @@ Ref<ArrayMesh> TerrainGen::GetMesh() {
 	return m;
 }
 
-int TerrainGen::GetCubeId(float values[8]) {
+inline int TerrainGen::GetCubeId(float values[8]) {
 	short int cubeIndex = 0;
 	for (int i = 0; i < 8; i++) {
 		if (values[i] > 0) {
@@ -279,7 +279,7 @@ int TerrainGen::GetCubeId(float values[8]) {
 }
 
 //float Cubifier::DensityFunc(int coordinates[3]) {
-float TerrainGen::DensityFunc(int x, int y, int z) {
+inline float TerrainGen::DensityFunc(int x, int y, int z) {
 	/*int x = coordinates[0];
 	int y = coordinates[1];
 	int z = coordinates[2];*/
@@ -287,7 +287,7 @@ float TerrainGen::DensityFunc(int x, int y, int z) {
 	return density;
 }
 
-Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
+inline Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
 	Vertex v;
 	
 	//hold the corner indices at the ends of the edge the vertex falls on
@@ -300,11 +300,10 @@ Vertex TerrainGen::EdgeVertexPos(int edge_index, float corner_densities[8]) {
 	float density_range = abs(v1 - v2);
 	float lerp_value = abs(v1) / density_range;
 
-	//this loop assumes the vector3 axis enum goes 0:X 1:Y 2:Z, stupid messy code but I'm just too busy to write a line three times
-	for (int i = Vector3::AXIS_X; i <= Vector3::AXIS_Z; i++) {
-		//lerp between VERTEX_TABLE[edge[0]][i] and VERTEX_TABLE[edge[1]][i]
-		v.pos[i] = VERTEX_TABLE[edge[0]][i] + lerp_value * (VERTEX_TABLE[edge[1]][i] - VERTEX_TABLE[edge[0]][i]);
-	}
+	//lerp between VERTEX_TABLE[edge[0]][i] and VERTEX_TABLE[edge[1]][i]
+	v.pos[0] = VERTEX_TABLE[edge[0]][0] + lerp_value * (VERTEX_TABLE[edge[1]][0] - VERTEX_TABLE[edge[0]][0]);
+	v.pos[1] = VERTEX_TABLE[edge[0]][1] + lerp_value * (VERTEX_TABLE[edge[1]][1] - VERTEX_TABLE[edge[0]][1]);
+	v.pos[2] = VERTEX_TABLE[edge[0]][2] + lerp_value * (VERTEX_TABLE[edge[1]][2] - VERTEX_TABLE[edge[0]][2]);
 
 	return v;
 }

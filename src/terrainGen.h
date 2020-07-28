@@ -351,7 +351,7 @@ namespace godot {
 		
 		//calculate normals of each vertex, assuming they form a triangle, no smooth shading so all the normals are the same
 		//write normals directly to vertices
-		void GenerateNormals(Vertex* vertices[3]);
+		void GenerateNormals(Vertex vertices[3]);
 		
 		void SetHeight(float newHeight);
 		
