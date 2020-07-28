@@ -24,7 +24,7 @@ func run(delta):
 	if(target_rot_euler.x == target_rot.get_euler().x): # check if the rotation has been clamped or not
 		target_pos = owner.player.get_translation() - root_state.to_player().normalized() * owner.distance
 	else:
-		print(OS.get_ticks_msec())
+		#print(OS.get_ticks_msec())
 		target_pos = focus + owner.transform.basis.z * owner.distance
 	
 	target_rot = Quat(target_rot_euler)
