@@ -1,32 +1,32 @@
 extends Node
 
-var generated_chunks : Array
-var chunks : Array
+var generation_queue : Array
+var generated_chunks : Dictionary
+var chunks : Dictionary
 
 func _ready():
-	
-	generated_chunks.resize(16)
+	for i in 16:
+		var coordinates := Vector2(i % 4, int(i / 4))
+		generation_queue.push_back(coordinates)
 
 func _process(delta):
 	
-	# generate chunks, don't add them to tree just yet
-	for i in range(generated_chunks.size()):
-		var chunk : Chunk = generated_chunks[i]
-		if(chunk == null): # this is just to limit chunk generation to once a frame, TODO replace this with actual multithreading or something
-			chunk = Chunk.new()
-			chunk.heightmap = (load("res://heightmap.png"))
-			chunk.height = 5
-			chunk.translation.x = i * 15
-			chunk._generate_mesh()
-			
-			generated_chunks[i] = chunk
-			add_chunk(i)
-			
-			break
-	
+	# generate chunks, don't add them to tree just yet 
+	if(generation_queue.size() != 0):# this is just to limit chunk generation to once a frame, TODO replace this with actual multithreading or something
+		var chunk = Chunk.new()
+		var coords = generation_queue.pop_front()
+		
+		chunk.heightmap = (load("res://heightmap.png"))
+		chunk.height = 5
+		chunk.translation.x = coords.x * 15
+		chunk.translation.z = coords.y * 15
+		chunk._generate_mesh()
+		
+		generated_chunks[coords] = chunk
+		add_chunk(coords)
 
 # add a generated chunk to the tree
-func add_chunk(chunk_idx : int):
+func add_chunk(coords : Vector2):
 	
-	add_child(generated_chunks[chunk_idx])
-	chunks.push_back(generated_chunks[chunk_idx])
+	add_child(generated_chunks[coords])
+	chunks[coords] = generated_chunks[coords]

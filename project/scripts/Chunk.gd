@@ -3,6 +3,7 @@ class_name Chunk
 
 var mesh := MeshInstance.new()
 var terrain_gen = preload("res://bin/terrainGen.gdns").new()
+var coordinates : Vector2	# should be vector2i, TODO fix this when I update Godot
 
 export var heightmap : Texture
 export var height : float
