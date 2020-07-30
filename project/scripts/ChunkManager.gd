@@ -16,7 +16,7 @@ func _process(delta):
 		var chunk = Chunk.new()
 		var coords = generation_queue.pop_front()
 		
-		chunk.heightmap = (load("res://heightmap.png"))
+		chunk.heightmap = load("res://heightmap.png").get_data().get_rect(Rect2(coords * 15, Vector2(16, 16)))
 		chunk.height = 5
 		chunk.translation.x = coords.x * 15
 		chunk.translation.z = coords.y * 15
