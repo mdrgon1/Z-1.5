@@ -11,6 +11,7 @@ using namespace godot;
 void TerrainGen::_register_methods() {
 	//register_property<TerrainGen, Ref<Image>>("heightmap", &TerrainGen::set_heightmap, &TerrainGen::get_heightmap, Ref<Image>(NULL));
 
+	register_method("generate_mesh_from_heightmap", &TerrainGen::GenerateMeshFromHeightmap);
 	register_method("set_heightmap", &TerrainGen::SetHeightmap);
 	register_method("get_heightmap", &TerrainGen::GetHeightmap);
 	register_method("generate_mesh", &TerrainGen::GenerateMesh);
@@ -33,6 +34,13 @@ TerrainGen::TerrainGen() {
 
 TerrainGen::~TerrainGen() {
 	m->free();
+}
+
+void TerrainGen::GenerateMeshFromHeightmap(Ref<Image> heightmap, float height) {
+	SetHeightmap(heightmap);
+	SetHeight(height);
+	GenDensitymap();
+	GenerateMesh();
 }
 
 void TerrainGen::SetHeightmap(Ref<Image> newHeightmap) {
@@ -223,7 +231,6 @@ void TerrainGen::GenerateMesh() {
 
 	m->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, arrays);
 }
-
 
 inline void TerrainGen::GenerateNormals(Vertex vertices[3]) {
 	Vertex* v1 = &vertices[0];

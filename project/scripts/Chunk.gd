@@ -8,10 +8,7 @@ export var heightmap : Texture
 export var height : float
 
 func _ready():
-	terrain_gen.set_heightmap(heightmap.get_data())
-	terrain_gen.set_height(height)
-	terrain_gen.gen_densitymap()
-	terrain_gen.generate_mesh()
+	terrain_gen.generate_mesh_from_heightmap(heightmap.get_data(), height)
 	mesh.set_mesh(terrain_gen.get_mesh())
 	
 	add_child(mesh)

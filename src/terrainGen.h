@@ -340,6 +340,9 @@ namespace godot {
 
 		~TerrainGen();
 
+		//sets the height and heightmap, generates a densitymap and mesh from those
+		void GenerateMeshFromHeightmap(Ref<Image> heightmap, float height);
+
 		void SetHeightmap(Ref<Image> newHeightmap);
 		Array GetHeightmap();
 
