@@ -16,4 +16,4 @@ func _generate_mesh():
 
 func _notification(what):
 	if what == NOTIFICATION_PREDELETE:
-		mesh.free()
+		terrain_gen.free()
