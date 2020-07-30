@@ -32,6 +32,10 @@ config/use_custom_user_dir=true
 config/custom_user_dir_name="C:\\Users\\mathi\\Documents\\Godot\\Z 1.5"
 config/icon="res://icon.png"
 
+[autoload]
+
+ChunkManager="*res://scripts/ChunkManager.gd"
+
 [input]
 
 move_forward={
