@@ -21,8 +21,8 @@ func _process(delta):
 
 # generate terrain geometry
 # does not add the chunk to the scenetree, just creates all the data
-func generate_chunk(coords : Vector2):
-	var chunk = Chunk.new()
+func generate_chunk(coords : Vector2) -> void:
+	var chunk : Chunk = Chunk.new()
 	
 	chunk.heightmap = preload("res://heightmap.png").get_data().get_rect(Rect2(coords * 15, Vector2(16, 16)))
 	chunk.height = 5
@@ -34,7 +34,7 @@ func generate_chunk(coords : Vector2):
 	generated_chunks[coords] = chunk
 
 # add a generated chunk to the tree
-func add_chunk(coords : Vector2):
+func add_chunk(coords : Vector2) -> void:
 	
 	if(!generated_chunks.has(coords)):
 		generate_chunk(coords)
@@ -42,11 +42,11 @@ func add_chunk(coords : Vector2):
 	add_child(generated_chunks[coords])
 	chunks[coords] = generated_chunks[coords]
 
-func remove_chunk(coords : Vector2):
+func remove_chunk(coords : Vector2) -> void:
 	remove_child(chunks[coords])
 	chunks.erase(coords)
 
-func unload_chunk(coords : Vector2):
+func unload_chunk(coords : Vector2) -> void:
 	
 	if chunks.has(coords):
 		remove_chunk(coords)

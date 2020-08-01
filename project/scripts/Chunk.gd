@@ -8,7 +8,7 @@ var coordinates : Vector2	# should be vector2i, TODO fix this when I update Godo
 export var heightmap : Image
 export var height : float
 
-func _generate_mesh():
+func _generate_mesh() -> void:
 	terrain_gen.generate_mesh_from_heightmap(heightmap, height)
 	mesh.set_mesh(terrain_gen.get_mesh())
 	
