@@ -1,27 +1,27 @@
 extends Node
 
-var generation_queue : Array
-var generated_chunks : Dictionary
+var loading_queue : Array
+var loaded_chunks : Dictionary
 var chunks : Dictionary
 
 func _ready():
 	for i in 16:
 		var coordinates := Vector2(i % 4, int(i / 4))
-		generation_queue.push_back(coordinates)
+		loading_queue.push_back(coordinates)
 
 func _process(delta):
 	
 	# generate chunks, don't add them to tree just yet 
-	if(generation_queue.size() != 0):# this is just to limit chunk generation to once a frame, TODO replace this with actual multithreading or something
+	if(loading_queue.size() != 0):# this is just to limit chunk generation to once a frame, TODO replace this with actual multithreading or something
 		
-		var coords = generation_queue.pop_front()
-		generate_chunk(coords)
+		var coords = loading_queue.pop_front()
+		load_chunk(coords)
 		
 		add_chunk(coords)
 
 # generate terrain geometry
 # does not add the chunk to the scenetree, just creates all the data
-func generate_chunk(coords : Vector2) -> void:
+func load_chunk(coords : Vector2) -> void:
 	var chunk : Chunk = Chunk.new()
 	
 	chunk.heightmap = preload("res://heightmap.png").get_data().get_rect(Rect2(coords * 15, Vector2(16, 16)))
@@ -31,25 +31,27 @@ func generate_chunk(coords : Vector2) -> void:
 	chunk.translation.z = coords.y * 15
 	chunk._generate_mesh()
 	
-	generated_chunks[coords] = chunk
+	loaded_chunks[coords] = chunk
 
 # add a generated chunk to the tree
 func add_chunk(coords : Vector2) -> void:
 	
-	if(!generated_chunks.has(coords)):
-		generate_chunk(coords)
+	if(!loaded_chunks.has(coords)):
+		load_chunk(coords)
 	
-	add_child(generated_chunks[coords])
-	chunks[coords] = generated_chunks[coords]
+	add_child(loaded_chunks[coords])
+	chunks[coords] = loaded_chunks[coords]
 
+# remove a chunk from the tree
 func remove_chunk(coords : Vector2) -> void:
 	remove_child(chunks[coords])
 	chunks.erase(coords)
 
+# delete the chunk from memory
 func unload_chunk(coords : Vector2) -> void:
 	
 	if chunks.has(coords):
 		remove_chunk(coords)
 	
-	generated_chunks.erase(coords)
+	loaded_chunks.erase(coords)
 	chunks[coords].queue_free()
