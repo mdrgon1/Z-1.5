@@ -41,3 +41,15 @@ func add_chunk(coords : Vector2):
 	
 	add_child(generated_chunks[coords])
 	chunks[coords] = generated_chunks[coords]
+
+func remove_chunk(coords : Vector2):
+	remove_child(chunks[coords])
+	chunks.erase(coords)
+
+func unload_chunk(coords : Vector2):
+	
+	if chunks.has(coords):
+		remove_chunk(coords)
+	
+	generated_chunks.erase(coords)
+	chunks[coords].queue_free()
