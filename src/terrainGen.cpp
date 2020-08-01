@@ -33,7 +33,7 @@ TerrainGen::TerrainGen() {
 }
 
 TerrainGen::~TerrainGen() {
-	m->free();
+	//m->free();
 }
 
 void TerrainGen::GenerateMeshFromHeightmap(Ref<Image> heightmap, float height) {

@@ -24,8 +24,8 @@ namespace godot {
 	static const int NUM_CUBES = (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1) * (CHUNK_SIZE - 1);
 	static const int MAX_NUM_VERTICES = MAX_NUM_VERTICES_PER_CUBE * NUM_CUBES;
 
-	class TerrainGen : public Node2D {
-		GODOT_CLASS(TerrainGen, Node2D)
+	class TerrainGen : public Object {
+		GODOT_CLASS(TerrainGen, Object)
 
 	private:
 
