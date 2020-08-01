@@ -36,5 +36,8 @@ func generate_chunk(coords : Vector2):
 # add a generated chunk to the tree
 func add_chunk(coords : Vector2):
 	
+	if(!generated_chunks.has(coords)):
+		generate_chunk(coords)
+	
 	add_child(generated_chunks[coords])
 	chunks[coords] = generated_chunks[coords]
