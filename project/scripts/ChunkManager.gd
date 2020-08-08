@@ -69,5 +69,4 @@ func unload_chunk(coords : Vector2) -> void:
 	if chunks.has(coords):
 		remove_chunk(coords)
 	
-	loaded_chunks[coords].queue_free()
 	loaded_chunks.erase(coords)
