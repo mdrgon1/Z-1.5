@@ -3,6 +3,7 @@ extends Node
 var loading_queue : Array
 var loaded_chunks : Dictionary
 var chunks : Dictionary
+var heightmap : Image = preload("res://heightmap.png").get_data()
 
 func _ready():
 	for i in 16:
@@ -24,7 +25,7 @@ func _process(delta):
 func load_chunk(coords : Vector2) -> void:
 	var chunk : Chunk = Chunk.new()
 	
-	chunk.heightmap = preload("res://heightmap.png").get_data().get_rect(Rect2(coords * 15, Vector2(16, 16)))
+	chunk.heightmap = heightmap.get_rect(Rect2(coords * 15, Vector2(16, 16)))
 	chunk.height = 5
 	chunk.translation.x = coords.x * 15
 	chunk.translation.y = -10
