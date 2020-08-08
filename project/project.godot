@@ -36,6 +36,10 @@ config/icon="res://icon.png"
 
 ChunkManager="*res://scripts/ChunkManager.gd"
 
+[debug]
+
+settings/fps/force_fps=30
+
 [input]
 
 move_forward={
